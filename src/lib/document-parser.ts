@@ -1,29 +1,15 @@
-import { execFileSync } from 'child_process';
-import { writeFileSync, unlinkSync } from 'fs';
-import { join } from 'path';
-import { tmpdir } from 'os';
-
-function runScript(scriptName: string, buffer: Buffer, ext: string): string {
-  const tmpPath = join(tmpdir(), `audit-bee-${Date.now()}.${ext}`);
-  try {
-    writeFileSync(tmpPath, buffer);
-    const scriptPath = join(process.cwd(), 'scripts', scriptName);
-    return execFileSync('node', [scriptPath, tmpPath], {
-      encoding: 'utf-8',
-      maxBuffer: 50 * 1024 * 1024,
-      timeout: 60000,
-    });
-  } finally {
-    try { unlinkSync(tmpPath); } catch { /* ignore */ }
-  }
-}
+import mammoth from 'mammoth';
 
 export async function parsePDF(buffer: Buffer): Promise<string> {
-  return runScript('parse-pdf.js', buffer, 'pdf');
+  // Dynamically import pdf-parse to avoid webpack issues
+  const pdfParse = (await import('pdf-parse')).default;
+  const data = await pdfParse(buffer);
+  return data.text;
 }
 
 export async function parseDOCX(buffer: Buffer): Promise<string> {
-  return runScript('parse-docx.js', buffer, 'docx');
+  const result = await mammoth.extractRawText({ buffer });
+  return result.value;
 }
 
 export async function parseDocument(
