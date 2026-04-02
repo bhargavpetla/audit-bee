@@ -1,0 +1,2419 @@
+
+
+ 
+ 
+ 
+Managed Service 
+Provider (MSP) 
+ 
+Initiative Requirements 
+ 
+Capabilities Assessment Checklist v4.2  
+ 
+Updated: September 2025 
+ 
+ 
+ 
+ 
+For more information visit cloud.google.com/partners/msp-initiative 
+ 
+1 
+
+ 
+ 
+ 
+ 
+Confidentiality Notice  
+ 
+You are receiving this document because you've been identified as a qualified prospective partner to 
+the Google Cloud Managed Service Provider  (MSP) Initiative. As explained in the letter accompanying 
+this document, the initiative allows you to pursue third-party validated assessment on your Managed 
+Services for Google Cloud practice.   
+ 
+As a qualified prospect, you are invited to review this document and use it in preparation for your MSP 
+Capabilities Assessment. We hope that this checklist sparks your creativity on what can be achieved in 
+the immense cloud MSP opportunity and how Google Cloud can help you achieve that.  
+ 
+We would like to remind you that you are bound by confidentiality terms with Google, under which this 
+checklist is being shared. Please consider this document confidential, internal-only, and need-to-know 
+inside your organization; Any unauthorized disclosure or misuse of this document may be considered a 
+breach of those confidentiality terms.  Any recipients of this document must be made explicitly aware  
+of our mutual confidentiality obligations. 
+ 
+If you received this document by mistake, please notify the sender immediately and delete the 
+document from all storage locations. Thank you for your cooperation in keeping this information 
+confidential. 
+ 
+ 
+ 
+ 
+ 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 2 
+ 
+
+ 
+ 
+ 
+Confidentiality Notice 2
+ 
+Introduction 4
+ 
+Partner assessment process 5
+ 
+Assessment scheduling 6
+ 
+Process and Controls Overview 6
+ 
+New-Cycle Assessment duration and agenda 6
+ 
+Renewal Assessment Scope 6
+ 
+Initiative requirements assessment checklist 7
+ 
+1.0 Partner overview 9
+ 
+2.0 Operations and support 13
+ 
+3.0 Cloud management platform 21
+ 
+4.0 Google Cloud product technical knowledge 26
+ 
+5.0 Security 30
+ 
+6.0 Assessment, design, and migration 34
+ 
+7.0 Customer Success, optimization, satisfaction, and improvement 37
+ 
+Appendix 1: Adding Affiliates and Regional Expansions 41
+ 
+Affiliated Partner 41
+ 
+Regional expansion 41
+ 
+Partner assessment types 41
+ 
+Affiliated Partner - Full Assessment 41
+ 
+Affiliated Partner - Partial Assessment 41
+ 
+Regional Validation Assessment 42
+ 
+ 
+ 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 3 
+ 
+
+ 
+ 
+MSP Initiative Requirements 
+Capabilities Assessment Checklist v4.2 (September 2025) 
+___ 
+Introduction 
+The Managed Service Provider (“MSP”) Initiative is geared toward Premier Level partners authorized in 
+the Google Cloud Partner Advantage Sell or Service Engagement Models that deliver managed 
+application and support services to Google Cloud customers. 
+This document defines the requirements for entry and continuous participation in the Google Cloud 
+Managed Service Provider (MSP) Initiative. 
+ 
+Google Cloud MSP partners are expected to be able to provide customers with: 
+ 
+● Full featured managed services technical support operations 
+Partners participating in the MSP Initiative offer customers consulting and support services that 
+enable a smooth onboarding into Google Cloud technologies, on-going optimization and 
+support services to help establish processes and operations, and well-defined service level 
+agreements (SLAs) based on business requirements. MSP partners help ensure agreed upon 
+uptime compliance for mission-critical assets. Such key capabilities include: 
+○ Ability to deliver managed services 24/7/365 technical support through documented 
+standards and procedures 
+○ Certified technical support engineers able to solve complex issues and escalations 
+○ Quick-response  enterprise-grade SLAs  
+ 
+● Deep cloud expertise 
+MSP partners have certified Google Cloud Professionals who can conduct application and 
+infrastructure assessments to migrate customers to Google Cloud technologies and support the 
+design of new cloud-native solutions using containers and serverless technologies while 
+operating an automated monitoring and operations platform.  
+○ Managed services through cloud-native tooling integrations and automation 
+○ Google Cloud certified personnel across functions such as support delivery practice, 
+consulting delivery practice, and presales 
+○ Cloud consultation services including migrations, cloud transformations, and managed 
+services 
+ 
+● Day-2 Managed Services: manage, monitor, remediate, optimize 
+Partners participating in the MSP Initiative can provide a full customer lifecycle of services 
+including the planning and design of new cloud infrastructure architectures, building or 
+migrating business solutions in an agile DevOps process with the customer, and running 
+day-to-day operations and optimization of an ever-growing number of cloud-based workloads. 
+○ Managed services solution providing proactive monitoring and alerting 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 4 
+ 
+
+ 
+ 
+○ Workload management and automation 
+○ Proactive optimization reporting and execution on behalf of the customer 
+○ Managed services beyond the infrastructure and into the application layer 
+○ All additional and applicable Day-2 DevOps services 
+○ Additional value-added services such as managed security  
+ 
+● Cloud management and automation platform 
+MSP partners operate an automated cloud management platform (CMP) that is well integrated 
+with Google Cloud components.  This platform usually comprises MSP-developed tools for 
+operations and deployments, along with best-in-class third-party discovery, monitoring, and 
+security applications. The CMP enables visibility, simplifies management, optimizes utilization, 
+and provides resource management in the cloud environment. 
+o CMP solution enabling customers to optimize and manage their cloud infrastructure for 
+cost, security, and operations 
+o State-of-the-art cloud-native tooling and services enabling infrastructure and 
+application lifecycle management including, but not limited to Terraform, Jenkins, Git, 
+Puppet, Chef, K8s, etc. 
+o Customer accessible ticketing system capable of tiering and escalation paths 
+o Managed services tools and solutions, including a configuration management database 
+(CMDB) which enables functionality for component governance and tracking, as well as 
+tracking of configuration changes across managed cloud assets 
+ 
+To qualify for the MSP Initiative, a partner must: 
+■ Satisfy MSP Initiative prerequisites; These are documented in the Google Cloud MSP Initiative 
+Guide which is provided to partners in their invitation email to the MSP Initiative.    
+■ Receive an invitation to the MSP Initiative based upon requirements being met; 
+■ Complete an assessment with a Google designated third-party assessment firm; and  
+■ Receive a “Pass” decision on the assessment from the Google Cloud MSP Initiative team 
+ 
+Upon certification as a Google Cloud MSP, the partner will receive additional benefits outlined in the 
+Google Cloud MSP Initiative Guide. 
+ 
+A complete set of Google Cloud MSP Initiative prerequisites are available in the Google Cloud MSP 
+Initiative Guide. 
+ 
+Partner assessment process 
+Google requires that systems, processes, and employees that service the MSP practice area and its 
+customers be evaluated through third-party assessments. Partners will be assessed ahead of initial 
+activation into the MSP Initiative, then annually for performance over the previous year to confirm 
+continued eligibility to participate. Partners must submit to a New-Cycle MSP Assessment prior to initial 
+activation in the MSP Initiative. Participants in the MSP Initiative will then undergo Renewal Assessments 
+on the second and third anniversaries of their participation to confirm continued eligibility to participate. 
+Ahead of the fourth year of the cycle, the partner will submit again to a New-Cycle MSP Assessment and 
+the sequence of one New-Cycle and two Renewal Assessments will continue for the duration of the 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 5 
+ 
+
+ 
+ 
+partner's participation. Assessments must be completed by the anniversary date of the previous 
+assessment. 
+Assessment scheduling 
+As a general guideline, an assessment will not be scheduled until the partner has submitted a complete 
+application and Google has verified that the MSP Initiative prerequisites have been met. Once 
+prerequisites have been validated, partner contact information will be provided to the third-party 
+assessment firm (referred to in this document as the “Assessor”) for scheduling the assessment. The 
+partner should include the leadership team responsible for their Managed Services Technical Support 
+and Operations. 
+ 
+Process and Controls Overview 
+Partners may opt to have a Process and Controls Overview ahead of the assessment. This session is 
+intended to provide the partner with additional preparation for the assessment. The duration is 4-6 
+hours, and the deliverable is a written report detailing best practices for the New-Cycle Assessment or 
+the Renewal Assessment. A Process and Controls Overview is strongly recommended. 
+ 
+New-Cycle Assessment duration and agenda 
+Partners should plan on two full days for the assessment. A sample itinerary is below:  
+Day 1 Assessment agenda items Time 
+Introductions and review of assessment agenda and methodology 9:00-9:15 
+Partner overview 9:15-10:45 
+Operations and support 11:00-12:30 
+Cloud management platform 13:00-14:00 
+Google Cloud product technical knowledge 14:00-16:00 
+ 
+Day 2 Assessment agenda items Time 
+Google Cloud product technical knowledge (cont. if needed) 
+Security 9:00-11:00 
+Assessment, design, and migration 11:00-12:30 
+Optimization, customer satisfaction, and improvement 13:00-14:30 
+Assessor review and preparation for closing meeting   14:30-15:00 
+Closing meeting 15:00-16:00 
+ 
+Renewal Assessment Scope 
+ 
+Partner will receive notification from the Google Cloud MSP Initiative team for the upcoming Renewal 
+Assessment and due date. Partner contact information will be provided to the Assessor upon 
+confirmation of the interest of the partner to continue participating in the MSP Initiative.  
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 6 
+ 
+
+ 
+ 
+ 
+- The Assessor will be looking for changes in the partner practice since the time of the last 
+assessment. This includes general improvements, any major organization structure changes, and 
+checking against any new controls in the then-current version of the MSP Capabilities 
+Requirements. 
+- During a Renewal Assessment, the Assessor will require the partner to present evidence for all  
+the controls that are marked in the column “R” in the checklist. If there are any major changes in 
+other areas of the partner practice, the partner must inform the Assessor and have evidence 
+ready to present their capabilities for those additional controls.  
+ 
+Please note that the assessment checklist is designed to iterate over time with additional controls added, 
+therefore any Renewal Assessments will almost certainly include some net-new controls to be met. MSP 
+partners are advised to utilize the Process and Controls Overview engagement to prepare for such 
+changes. 
+ 
+Partners should plan on one full day for the Renewal Assessment in the two years following their initial 
+activation.  Every third year of the partner's participation in the initiative, the partner must undergo a 
+New-Cycle Assessment over two full days.  
+ 
+Initiative requirements assessment checklist 
+In preparation for the assessment, it is recommended that partners use the checklist below to 
+self-assess compliance with each of the requirements using the Met (Y/N) column.  
+ 
+Each control in the checklist consists of: 
+ 
+1. A high-level explanation of the capabilities expected in the specific function of your practice 
+area.  
+2. A list of Required Evidence controls which define the minimum viable product a Google Cloud 
+MSP partner must offer to their customers.  
+3. A column titled “R” accompanying the Required Evidence controls, which indicates with an “X”, 
+the list of required controls if this checklist is being used for a mid-term Renewal Assessment.  
+4. Some controls in the checklist include additional evidence titled Voluntary Advanced 
+Capabilities Declaration. These capabilities are exhibited by select MSP partners who use 
+technology solutions for automation, integration with customer's ITSM tools, and comprehensive 
+cloud management platforms.  As of the current version of the Checklist, these are not 
+compulsory requirements to participate in the MSP Initiative.  They are offered here as an 
+opportunity for the partner to demonstrate these advanced capabilities, and might become 
+standard requirements in future versions of the Checklist.        
+ 
+Where there is a requirement to show customer records, or examples of implementations and 
+migrations, these must be no older than two years, from the date of the assessment. 
+ 
+Assessment findings and follow up 
+At the New-Cycle or Renewal Assessment closing meeting, the Assessor will present a brief synopsis of 
+the results. Opportunities for improvement will also be presented.  
+ 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 7 
+ 
+
+ 
+ 
+The Assessor will send a summary report to the partner with any open action items. If there are any open 
+action items, the partner will be given an opportunity to provide written evidence of closure to the 
+Assessor within five business days after the assessment  summary report is delivered. After five business 
+days have passed, the Assessor will forward a final report to the Google Cloud MSP Initiative team. 
+ 
+The Google Cloud MSP Initiative team will make a decision and inform the partner regarding admittance 
+to the Initiative. 
+ 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 8 
+ 
+
+ 
+ 
+ 
+1.0 Partner overview 
+Item Requirement Description 
+1.1 
+General 
+1.1.1 
+Company 
+overview  
+The MSP partner must provide a company overview including the following: 
+● General profile of the company: History, structure, and competitive 
+differentiators  
+● Countries or regions served, sales offices, and support delivery 
+offices for all Google Cloud Managed Services 
+● Number of employees in the company and employees dedicated to 
+the partner’s Google Cloud Managed Services 
+● Industry focus and customer profile 
+● Scale of managed services in relation to the partner's overall 
+business, as a percentage of business volume and as a percentage 
+of customer count 
+Evidence Required R Met Y/N 
+Provide a presentation that covers all the subjects above, 
+and deliver a 15 minute review of it at the start of the 
+assessment.  
+x  
+1.2  
+Service 
+offerings / core 
+technical 
+competencies 
+1.2.1  
+Managed 
+service 
+offerings 
+Partners must provide details about their managed services value 
+proposition including their managed services offerings, support team, and 
+account management structure. 
+ 
+Managed services value proposition 
+● How the partner's support offering provides additional value over 
+Google Cloud direct support  
+ 
+Managed services offerings 
+● Specifics of managed services offering(s) 
+● Support offers and differences between them 
+● What is supported or not supported within their support packages 
+(spheres of support or management) 
+ 
+Managed services support team 
+● The structure of the partner’s managed services support team 
+● A list of the key personnel in managed services, their level, locations, 
+and confirmation of their full-time employee or external-vendor 
+status 
+ 
+Managed services account management structure 
+● Managed services strategy as it is presented to customers 
+● Technical account management / customer success strategy, 
+including customer satisfaction, workload optimization, and 
+continuous improvement 
+● Additional managed services capabilities on Google Cloud, such as 
+managed security or managed database services and any additional 
+SLA’s offered 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 9 
+ 
+
+ 
+ 
+Evidence Required R Met Y/N 
+A presentation of not more than 30 minutes with an overview 
+of the above mentioned subjects, which includes: 
+● Documentation showing the lifecycle of a customer 
+from lead to solution architecture & design, to 
+deployment, potentially professional services to 
+assist with migration or transformation followed by 
+managed services, and finally decommission 
+● Organizational structure of support teams, 
+professional services teams, and account 
+management teams 
+● Documentation around additional managed offers 
+beyond the platform 
+  
+1.2.2  
+Core 
+technical 
+competencies 
+Partner must describe the core technical competencies of the company, 
+including but not limited to the following areas:  
+1. Cloud migration 
+2. Containerization  
+3. Big data and analytics 
+4. DevOps 
+5. AI enabled experiences / generative AI 
+Evidence Required R Met Y/N 
+An overview presentation of capabilities of the company in 
+each of these four core technical competencies: 
+ 
+● If the partner has Cloud Migration - Services 
+Specialization, there is no need to include cloud 
+migration in the presentation 
+● If the partner has Application Development - 
+Services Specialization, there is no need to include 
+DevOps in the presentation 
+● If the partner has Data Analytics Specialization, there 
+is no need to include big data and analytics in the 
+presentation 
+ 
+The presentation must include: 
+ 
+● Documentation of customer case studies or other 
+evidence of service delivery related to core technical 
+competencies leveraging Google Cloud products 
+● Documentation showing the partner's approach to 
+onboarding of new and existing resources to develop 
+core technical competencies 
+x  
+1.3  
+Google Cloud 
+business 
+1.3.1  
+Google 
+business 
+alignment 
+ 
+To participate in the MSP Initiative, partners must have a dedicated Google 
+Cloud Alliance Leader to develop a Joint Business Plan. The partner must be 
+able to provide roles / individuals who will align with Google, at least:  
+ 
+● Alliance Leader (dedicated to Google Cloud) 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 10 
+ 
+
+ 
+ 
+● Technical Support Operations Leader 
+● Sales Leader 
+● Sales Operations 
+● Executive Sponsor 
+● Marketing 
+● Engineering Leader 
+Evidence Required R Met Y/N 
+Documentation with listed personnel including title, 
+locations, contact information, and confirmation if these 
+individuals are dedicated to the partner’s Google Cloud MSP 
+practice, or shared with other practices / business units.  
+x  
+Present Google Cloud joint business plan covering the key 
+business initiatives and the areas of focus to grow the 
+partner's Google Cloud MSP business. 
+x  
+1.3.2  
+Google Cloud 
+Managed 
+Services web 
+presence 
+Partner must have a web page dedicated to the Google Cloud Managed 
+Services business practice area highlighting the technical capabilities and 
+managed services offering. 
+Evidence Required R Met Y/N 
+Provide the URL for partner’s dedicated Google Cloud 
+Managed Services business practice area web page and 
+validate the content being displayed. 
+x  
+The dedicated Google Cloud MSP website must showcase at 
+least two customer references of Google Cloud Managed 
+Services provided to the customers on an on-going basis 
+beyond initial cloud migrations or net-new cloud 
+developments.  These references may direct to the partner’s 
+Google Cloud Partner Directory profile or if the success 
+story is otherwise hosted by Google, directly to the Google 
+URL. 
+x  
+1.3.3  
+Customer 
+success 
+Utilizing Google’s Partner Program portal, achieve at least 2 Service 
+registrations having: 
+  
+Evidence Required R Met Y/N 
+● Managed services in-scope with engagement details 
+clearly articulated 
+● Applicable GCP project number(s) noted 
+● Product category: Google Cloud Platform 
+  
+1.3.4  
+Customer 
+retention 
+Retaining customers is an essential task of a successful MSP practice.  It is in 
+the continuous operation of a system where the opportunities to rearchitect 
+it are observed and capitalized as cost reductions, allowing MSPs to turn 
+their professional services wheel.   
+ 
+Partner must be able to provide evidence of customers retained for longer 
+than a year, and show how they handle and improve their customer 
+retention. Partner also need to demonstrate steps are taken to mitigate 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 11 
+ 
+
+ 
+ 
+churn risks, and when customer churn does occur, a cohesive process is 
+followed to downgrade the customer securely. 
+Evidence Required R Met Y/N 
+Partner must provide an example of one managed service 
+customer support contract demonstrating that Google 
+Cloud managed services have been provided for a duration 
+of at least one continuous year. 
+x  
+Partner must present an established documented process or 
+workflow describing how they respond, mitigate, and 
+process customer churn events.  
+  
+1.4  
+Resource 
+management 
+1.4.1  
+Capacity 
+planning 
+process 
+Partner must have a capacity planning process in place to ensure that 
+appropriate staffing and resources are available for the provisioning of 
+managed service offerings. 
+Evidence Required R Met Y/N 
+Description or records of capacity planning activities for the 
+managed service practice, including resources for cloud 
+enablement, migration planning, design and deployment, and 
+service delivery operations. 
+  
+ 
+ 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 12 
+ 
+
+ 
+ 
+ 
+2.0 Operations and support 
+Item Requirement Description 
+2.1 Customer 
+support model 
+ 
+2.1.1 
+Support 
+model 
+(24x7x365) 
+Partner must have a 24x7x365 support model which provides customers the 
+ability to request assistance in each of four priority levels: 
+ 
+● P1 – Critical Impact Issues (such as service is unavailable, service is 
+unusable across customer organization) 
+● P2 – High Impact Issues (such as service performance is degraded, 
+service available but producing significant error messages) 
+● P3 – Medium Impact Issues (such as error messages generated but 
+with no noticeable customer impact, questions about features 
+used) 
+● P4 – Low Impact Issues (such as questions about roadmap or 
+development, feature requests) 
+Evidence Required R Met Y/N 
+Provide process documentation on how priority levels are 
+determined, applied, and have their SLA/SLO defined to 
+respond within their support model. 
+x  
+Provide documentation defining managed services support 
+team structure and model across all regions and offices.  This 
+should include staffing strategy (onshore / offshore), 
+headcount and location of personnel.  
+x  
+Provide staffing records or other documented evidence 
+which demonstrates that each support tier is staffed with 
+certified Full Time Employees (FTEs) to respond to support 
+cases 24x7x365. 
+x  
+2.1.2  
+Support 
+personnel  
+staffing and 
+qualifications 
+Partner must demonstrate that the support model is staffed by personnel 
+with Google Cloud support / service expertise, including staff with Google 
+Cloud certifications. Partner must maintain a team of at least 12 full-time 
+employees carrying valid Professional Cloud Architect certification who are 
+designated to presales and MSP on-going delivery activities, and who are 
+accessible to manage Google Cloud customer escalations. 
+Evidence Required R Met Y/N 
+Partner must provide valid  Professional Cloud Architect 
+certification records for at least 12 full-time employees 
+(FTEs) currently working within the partner's MSP practice. 
+● This certified personnel must be employed by the 
+entity being assessed as an FTE. 
+● If the certified personnel are hired through a 
+fully-owned subsidiary or a parent entity, the partner 
+must add documentation demonstrating the 
+relationship between the entities. 
+● Temp-, Intern-, Vendor-, or any other status different 
+from full-time employee are not valid for the 
+purpose of this control. 
+x  
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 13 
+ 
+
+ 
+ 
+Documented confirmation that these individuals are 
+accessible as escalation points when required by the 
+partner's MSP support practice for Google Cloud. 
+x  
+Documented plan to provide Google Cloud education for 
+existing team members and for the onboarding of new team 
+members, as well as the path to obtain and maintain 
+on-going Google Cloud certification. 
+  
+2.1.3  
+Support tiers 
+Partner must offer tiered support (such as Tier 1, 2, 3; or flexible/ 
+customizable tiers) that clients can subscribe to for each of four priority 
+levels (P1-P4 as defined in 2.1.1).  
+Evidence Required R Met Y/N 
+Provide customer-facing documentation describing how 
+each of the support tiers are mapped to each priority level 
+(P1-P4). 
+  
+Provide customer-facing documentation describing their 
+support hours. 
+  
+Provide customer-facing documentation with expected 
+SLA/SLOs for each priority level. 
+x  
+Provide customer-facing documentation explaining how to 
+reach out for support. 
+  
+2.1.4  
+Post- 
+migration 
+hand-off to 
+support 
+services 
+Workload assessment, design, and migration are part of the customer’s 
+cloud journey. The MSP partner must provide a process documenting 
+transition for assessment, design, migration, or deployment to managed 
+services for ongoing support and management. 
+Evidence Required R Met Y/N 
+Provide documentation showing the hand-off process used 
+to transfer the ownership of two customer solutions 
+delivered in the last 24 months, from the Professional 
+Services or Consulting team to the Managed Services 
+Technical Support team. The process must include 
+documentation of the design or migration phases of the 
+solution, and the support plan going forward. 
+x  
+2.2 
+Logging and 
+retention  
+  
+2.2.1  
+Event logging 
+Partner must have tools / technologies (such as Google Cloud operations 
+suite (formerly Stackdriver) and Cloud Logging, to enable logging of events 
+at the infrastructure and/or application layers. Partner may rely on Google 
+tools, but should provide their approach to default policies and retention 
+across Google services, which they configure and respond to for their 
+managed services customers. 
+Evidence Required R Met Y/N 
+Provide evidence of event-logging capabilities, including the 
+collection of logs from servers, containers, network devices, 
+and storage systems (Infrastructure logging) OR the 
+collection of logs from databases, application servers, and/or 
+SaaS solutions (application logging). This evidence must 
+show the storage of these events in a collection system or 
+database, and the correlation of multiple log entries coming 
+from single events.    
+x  
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 14 
+ 
+
+ 
+ 
+Provide workflow documentation regarding how events 
+captured cause actions, such as auto-remediation or 
+generation of case reports to be supported by the partner 
+manually. 
+  
+2.2.2  
+Retention 
+policy 
+Partner must have a log retention policy, and a process for ensuring 
+compliance to the policy.  
+Evidence Required R Met Y/N 
+Provide an established documented log retention policy and 
+records of compliance. 
+x  
+Provide documentation of retention policy for infrastructure 
+layer logging and value-added application layer logging. 
+x  
+2.2.3  
+Log access 
+Partner must make logs accessible to the customer. 
+Evidence Required R Met Y/N 
+Demonstrate logs are provided to customers including 
+details of the methods to provide this access. 
+  
+2.2.4  
+Log data 
+mining  
+Partner must mine the log collections to perform root cause analysis and 
+process optimization. 
+Evidence Required R Met Y/N 
+Provide records of data analysis activities and examples of 
+recommendations for improvement based on these 
+activities. 
+  
+2.3  
+Ticketing 
+system 
+2.3.1  
+Ticketing tool 
+Partner must have a ticketing system, developed in-house or leveraging  
+third-party tools, to receive, track, and log service requests.  
+Evidence Required R Met Y/N 
+Technology demonstration highlighting the partner's  
+ticketing system which at a minimum must include: 
+● Products and tools used for receiving, tracking, and 
+logging service requests 
+● Ability of the support desk personnel to access the 
+list of previous service requests of a customer for 
+correlation purposes   
+● A capability must be present to keep logs and audit 
+trail of tasks that MSP personnel are requested to 
+implement. These may be in the form of 
+customer-approved change orders or closed service 
+requests, and could be present only for a subset of 
+customers who may have stronger operational 
+requirements 
+x  
+Voluntary advanced capabilities declaration: 
+ 
+ The demonstration showed that the ticketing system can interact 
+with the partner's CMDB so that change requests that will affect 
+configuration will generate auditable approval workflows. 
+ The demonstration included a capability for the customer to track 
+their invoicing and the telemetry data of their systems under 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 15 
+ 
+
+ 
+ 
+management, using ITSM ticketing tool integrations (i.e.,  
+customer-side ticketing system can remotely trigger a request for 
+log collection, monitoring, or billing data). 
+2.3.2  
+Case/request 
+handling 
+Partner must have a process for receiving, acknowledging, and recording 
+customer requests in accordance with service level objectives.  
+Evidence Required R Met Y/N 
+Demonstration of how support/service requests are received 
+(such as via call center, service desk, email, messaging, chat), 
+acknowledged (for example, via call back, if in SLA scope) 
+and logged/time stamped. 
+  
+2.3.3  
+Case/request 
+prioritization 
+Partner must prioritize and manage requests according to the mapping of 
+priority in accordance with their tiered support model referenced in section 
+2.1.3.  
+Evidence Required R Met Y/N 
+Examples of prioritized requests, i.e., in the ticketing system.   
+2.3.4  
+Case 
+escalation 
+Partner must have a process for escalation of cases, including escalation to 
+Google Cloud Support when appropriate. Partner must have an internal 
+escalation process describing how the various teams within the Google 
+Cloud practice area will escalate a technical issue internally before opening a 
+case with Google. For example, Partner Technical Support Level 1 Engineer 
+escalates internally to Partner Technical Support Level 2, 3, or 4 and then 
+opens Google Support case, or Professional Services Engineer escalates an 
+internal partner case for assistance to Partner Technical Support before 
+opening a case to Google). 
+Evidence Required R Met Y/N 
+Provide a documented escalation process, and at least one 
+example of the process executed in the last 12 months. 
+x  
+Provide the documentation for the defined internal process 
+to escalate within the partner's own internal teams. 
+  
+Provide the documentation for the defined internal process 
+to escalate to Google Cloud Support. 
+  
+Provide an example of the information that is available to 
+customers on how to escalate cases opened with the 
+partner. 
+  
+2.3.5  
+Case/request 
+resolution 
+Partner must have processes defining resolution of customer cases, 
+including, for example, how bug and feature requests are handled, how 
+service unavailability is handled.  
+Evidence Required R Met Y/N 
+Provide records of case status and resolution.   
+Provide process documentation regarding how the MSP 
+team handles case resolution. 
+  
+2.3.6  
+Time of 
+response/ 
+resolution 
+Partner must track case response and resolution time at each priority level 
+for each tier of support. 
+Evidence Required R Met Y/N 
+Documentation showing at least six months aggregate  x  
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 16 
+ 
+
+ 
+ 
+tracking of cases showing the partner's Mean Time to 
+Response metric. 
+Describe actions taken in response to these metrics.   
+ 
+  
+Voluntary advanced capabilities declaration: 
+ 
+ The evidence showed that the partner also tracks Mean Time to 
+Resolution of cases and acts upon the results of these metrics. 
+2.3.7 
+Customer 
+verification  
+Partner must have processes allowing customers to verify the successful 
+resolution of cases and requests. 
+Evidence Required R Met Y/N 
+Provide records of customer verification of case resolution. 
+ 
+x  
+2.4 
+Incident 
+management 
+  
+2.4.1  
+Incident 
+management 
+process 
+Partner must have a process in place for identifying and recording 
+service-impacting incidents.  
+Evidence Required R Met Y/N 
+Provide a documented process for incident management, 
+including how service-impacting incidents are filtered from 
+all recorded events. 
+x  
+2.4.2  
+Incident 
+management 
+records 
+Partner must maintain records of identified incidents. 
+Evidence Required R Met Y/N 
+Include examples of identified incidents, including examples 
+where incident information was communicated to customers. 
+x  
+2.5  
+Problem 
+management 
+2.5.1  
+Problem 
+management 
+process 
+Partner must have a process in place for identifying and recording problems, 
+including those resulting from incidents with no known cause or due to 
+proactive monitoring or data analysis.  
+Evidence Required R Met Y/N 
+Provide a documented process for problem management 
+and examples of problem records. 
+x  
+2.5.2 Problem 
+management 
+records 
+Partner must maintain records of problem management activities.  
+Evidence Required R Met Y/N 
+Provide examples of problem management, including 
+identification, logging, analysis, and entry into a Known Errors 
+Database (KEDB). 
+x  
+2.6  
+Asset 
+management 
+  
+2.6.1  
+Asset 
+management 
+strategy and 
+records 
+Partner must have a strategy for tracking and managing deployed Google 
+Cloud assets beyond the Google Cloud Console, and must maintain records 
+of deployed assets. 
+Evidence Required R Met Y/N 
+A technology demonstration of how the partner tracks and 
+manages deployed Google Cloud assets. 
+x  
+Provide documentation that demonstrates a clear 
+deployment strategy for their managed services customers. 
+x  
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 17 
+ 
+
+ 
+ 
+Provide documentation or a technology demonstration 
+showing how the partner keeps record of the assets that are 
+deployed. 
+  
+2.7  
+Configuration 
+and change 
+management 
+2.7.1  
+Configuration 
+and change 
+management 
+processes 
+Partner must have processes in place for configuration and change 
+management.  This may include: 
+ 
+● Management of server images  
+● Configuration of instances (at launch / while active) 
+● Application of patches and upgrades  
+● Configuration of security groups and firewalls 
+● Versioning / change rollback 
+ 
+Functions in this area  include but are not limited to creating, versioning, and 
+maintaining a library of server images and configuration files, keeping a 
+history of changes to configuration, testing changes and upgrades before 
+applying them, applying patches and upgrades to production instances, and 
+rolling back changes to configuration files if necessary. 
+Evidence Required R Met Y/N 
+Include a technology demonstration, including examples of 
+the above activities.   
+  
+Provide a documented change management process.   
+2.8  
+Release and 
+deployment 
+management 
+2.8.1  
+Release and 
+deployment 
+management 
+processes 
+Partner must have processes in place for release and deployment of 
+applications / workloads.  These processes may include but are not limited to: 
+ 
+The release and deployment management process should determine the 
+release scope, identify stakeholders, and create a release plan. The process 
+should include a testing phase in a staging environment to ensure that the 
+application or workload is working as expected. The deployment process 
+should deploy the application or workload to production and initiate 
+monitoring in production to ensure that it is performing as expected. There 
+should be a rollback process to revert to a previous version if necessary. 
+Evidence Required R Met Y/N 
+Provide established documented processes for release and 
+deployment management, including a technology 
+demonstration of tools used. 
+  
+2.8.2  
+Deployment 
+tooling 
+As part of the release and deployment process, the partner must utilize 
+self-service tooling or managed CI/CD (Continuous Integration / Continuous 
+Delivery) pipelines for application and infrastructure deployment and to  
+decrease deployment times, improve reliability, and reduce customer 
+deployment costs through automation.  
+Evidence Required R Met Y/N 
+Provide documentation or a technology demonstration of the 
+self-service tooling and/or managed CI/CD pipelines 
+application/infrastructure deployment of the partner's 
+customers. The partner must demonstrate or present the 
+  
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 18 
+ 
+
+ 
+ 
+process and tooling for self-service or automated CI/CD 
+pipelines in place for deployment.  
+2.9  
+Access 
+management 
+2.9.1  
+Partner access 
+to customer 
+infrastructure 
+Partner is expected to actively manage customer workloads and must 
+provide documentation on how they achieve required access to the 
+customer's infrastructure.  
+Evidence Required R Met Y/N 
+Provide documentation on how access is achieved. x  
+Provide definitions on what level of access is achieved. x  
+Provide documentation on time limitations configured. x  
+2.9.2  
+Customer 
+access to 
+Google Cloud 
+Partner must define the level of Google Cloud access provided to customers 
+if workloads are within the partner’s organization or otherwise. 
+Evidence Required R Met Y/N 
+Provide documentation of the identity and access 
+management (IAM) policy and processes used to enable 
+customer access to Google Cloud 
+x  
+Demonstrate the tooling provided for directory integration, 
+user management, and access management 
+x  
+2.10  
+Service level 
+agreements  
+2.10.1  
+Support SLAs 
+Partner must provide support SLAs to customers specific to Google Cloud 
+services and products and additional SLAs specific to the partner's core 
+technical competency.  
+ 
+Advanced capabilities in this area are shown by partners who provide 
+application-level or business-outcome SLAs to customers,   
+ 
+Evidence Required R Met Y/N 
+Demonstrate that support SLAs specific to Google Cloud 
+Managed Services are provided to customers in the form of 
+signed documentation evidence in customer contracts. 
+x  
+Provide documentation on additional SLAs offered for 
+partner specific competencies provided to customers. 
+  
+Voluntary advanced capabilities declaration: 
+  
+ Partner offers application-level SLAs to customers. 
+ Partner offers business-outcome SLAs based on customer-specific 
+application or system requirements. 
+ 
+2.11  
+Reporting 
+2.11.1  
+Performance 
+analysis 
+reporting 
+ 
+Partner should provide performance analysis reporting to customers. This 
+type of reporting identifies areas where the customer may be able to 
+improve efficiency or where performance may be degraded. Includes a 
+summary of the new alerts and notifications for detected or documented 
+performance issues with customer applications or infrastructure over the last 
+reporting period.  
+ 
+These reports can be used to identify trends in performance and to make 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 19 
+ 
+
+ 
+ 
+predictions about future performance requirements. 
+Evidence Required R Met Y/N 
+Partner must provide example Performance Analysis Reports 
+provided to customers, including tools and sources used, and 
+metrics gathered.  
+x  
+2.11.2  
+Asset/usage 
+reporting 
+Partner should provide asset/usage reporting to customers with data such as 
+number of assets in use, the amount of storage space, and the amount of 
+network traffic being generated, and qualitative information such as areas 
+where performance may be degraded, calls-to-action to improve 
+performance by upgrading the deployed resources or optimizing 
+applications, security risks associated with assets, etc.   
+ 
+This information can be used to track the usage of assets, identify 
+underutilized assets, and make decisions about future capacity planning.   
+Evidence Required R Met Y/N 
+Partner must provide examples of the Asset Usage Reports 
+provided to customers, including tools and sources used, and 
+metrics gathered.  The examples must include asset use 
+improvement recommendations. 
+x  
+2.11.3  
+Cost reporting 
+Partner must provide cost reporting to customers. These reports should 
+facilitate for the customer to understand their total cost of Google Cloud 
+usage, the cost of individual services, and the cost of specific resources.  The 
+reports should highlight potential cost savings associated with changes to 
+resource usage, identify underutilized resources, and provide 
+recommendations for improving cost-efficiency. 
+ 
+This information can be used to track costs, identify areas where costs may 
+be excessive, and make decisions about future cost-savings initiatives. 
+Evidence Required R Met Y/N 
+Partner must provide examples of the Cost Reports provided 
+to customers (can be anonymized), including tools and 
+sources used, and metrics gathered.  The examples must  
+include cost-effectiveness improvement recommendations. 
+x  
+ 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 20 
+ 
+
+ 
+ 
+ 
+3.0 Cloud management platform 
+Item Requirement Description 
+3.1  
+Customer 
+support portal 
+(CSP) 
+3.1.1  
+Customer 
+support portal 
+(CSP) 
+ 
+ 
+Partner must provide a customer-facing support portal, i.e., web based 
+interface(s) that act as customer landing pages for the partner's  
+ITSM/support offering, and for their managed Google Cloud projects and 
+resources.  
+ 
+This portal is the one-stop-shop for customers to find their service 
+monitoring, cost-monitoring, dashboard, reports, etc. The customer support 
+portal (CSP) should interact with the partner's ITSM tool (see control 2.3.1),  
+and allow customers to log and track support requests, view the history and 
+status of the workflows initiated by their requests, monitor workload 
+performance, understand usage and costs, and access relevant reports. 
+ 
+The partner’s CSP should be in addition to the Google Cloud Console, 
+providing valued added information to the end customer specific to the 
+workloads being managed.  
+Evidence Required R Met Y/N 
+Provide a live demonstration of the CSP, including examples of 
+customer interactions with the portal.  
+x  
+Show the ability for customers to interact with support and 
+service requests through their CSP.  
+x  
+Voluntary advanced capabilities declaration: 
+  
+ The portal provides value-added capabilities on top of Google Cloud 
+first-party portals in terms of understanding usage and costs, or 
+customization of the reports related to their services under 
+management.   
+ The portal includes access to a click-to-order catalog of online-based 
+managed services, and/or resold Google Cloud services. 
+ The portal offers the ability to self-provision managed services in the 
+partner's infrastructure or in Google Cloud. 
+ The portal allows the customer to monitor workload performance live 
+and/or see historical performance reports. 
+3.2  
+CMP 
+provisioning 
+and 
+orchestration 
+ 
+3.2.1  
+Cloud asset 
+provisioning 
+and 
+orchestration 
+ 
+ 
+ 
+Partner must operate a platform, or a combination of tools, APIs, and portals, 
+which can be used by customers or partner's service desks                                        
+to provision Google Cloud assets. The requests created by these tools should 
+be controlled by access policies and should be able to follow approval 
+processes which require human interaction or fulfillment of other associated 
+requests.  To orchestrate assets and execute required tasks, the partner might 
+use infrastructure-as-code blueprints.   
+ 
+The solution should be able to orchestrate workflows based on schedules or 
+events.  This solution should cover different types of server-based, serverless 
+and/or SaaS components, with the ability to operate assets for different types 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 21 
+ 
+
+ 
+ 
+of users, including customer and service desk personas, as well as other 
+applications and processes endpoints. 
+ 
+Evidence Required R Met Y/N 
+Capability for customers to request the provisioning,  
+deprovisioning, or modification of Google Cloud assets via the 
+CMP toolset (MSP personnel can do the fulfillment of this 
+request manually or using automated deployment and 
+configuration tools).  
+x  
+Voluntary advanced capabilities declaration: 
+ 
+ The demonstration of provisioning and deprovisioning capabilities 
+showed that services are exposed via an end-user portal AND via a 
+set of APIs that interact with portals or other ITSM tools on the 
+customer's end, enabling automated provisioning scenarios initiated 
+by customer's ITSM tools.   
+ The CMP includes integration with container orchestrators such as 
+Kubernetes automation, and configuration tools such as Terraform, 
+Ansible, Chef, Puppet, etc. 
+ The CMP can collect and maintain a chronological list of events that 
+have occurred within the CMP as an audit trail. 
+3.3  
+CMP inventory 
+and 
+classification 
+3.3.1 
+Configuration 
+management 
+database 
+Partner must be able to maintain at all times an accurate inventory of all assets 
+under their management. Partner must have a configuration management 
+database (CMDB), to store, track, and audit workload and asset configuration 
+items throughout their lifecycle. 
+ 
+The CMDB should have the capability to keep an accurate inventory of 
+configuration Items for the tracked assets.  The CMDB should be able to 
+interact with metadata from Google Cloud assets to organize resources and 
+execute tasks by labels, tags, access policies, locations, etc. The CMDB should 
+be able to initiate alerts in the case that configuration drift is detected in the 
+assets under management, and should be able to enforce the return to a 
+trusted-state configuration. 
+Evidence Required R Met Y/N 
+A demonstration of how the CMDB can maintain a list of 
+configuration items (CIs).  
+x  
+Demonstrate a link between incident reports/tickets to CIs and 
+change requests. 
+x  
+Partner must have the capability to discover new configuration 
+items like applications, servers, storage and services, and a 
+process to ingest them into the CMDB. 
+x  
+Voluntary advanced capabilities declaration: 
+ 
+ The demonstration included an existing customer implementation, or 
+a live scenario of the functionality of discovery and ingestion of the 
+CIs. 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 22 
+ 
+
+ 
+ 
+ Demonstrated the ability to record and maintain an audit trail of 
+changes and updates to CIs. 
+ The toolset was able to show the map of dependencies and 
+relationships between CIs. 
+ The solution includes customer-facing CMDB dashboards.  
+ The demonstration showed the CMDB's capability of identifying 
+configuration drift automatically in known CIs.  
+ Partner’s CMP or ITSM toolset automatically initiated alerts for review, 
+validation, or correction when configuration drift was detected. 
+3.4  
+CMP cost 
+management 
+and workload 
+optimization 
+3.4.1  
+CMP cost 
+management 
+Partner must operate a system to automate the tracking and consumption of 
+Google Cloud resources or have a process wrapping around the native cost 
+management capabilities in Google Cloud. This system must be able to track 
+resource consumption and monetary spending for all cloud assets, projects, 
+organizations, and billing subaccounts of the customer.  
+ 
+The CMP may enable the end-customer to create cost-allocation rules and 
+cross-charge to specific initiatives, departments, or org units inside the 
+customer.  The CMP's cost allocation structure should be customizable to 
+meet different customer structures. The CMP should provide the capability to 
+create budget alert policies and define triggers on spending anomaly 
+detection. 
+ 
+The partner's CMP should provide accurate analysis and reports and may 
+include predictive analytics to detect anomalies and contain future costs.  
+Evidence Required R Met Y/N 
+Provide examples of the reports that are regularly delivered to 
+customers, the sources used, and the metrics gathered to 
+demonstrate how their CMP tracks Google Cloud assets 
+costs. 
+● Automation can happen either real-time, interfacing 
+with Google Cloud APIs, or at regular intervals through 
+the automated export of Google Cloud and Partner 
+Sales Console billing information to BigQuery 
+● Ingestion of the gathered data to an MSP-operated 
+cost management system, database, or dashboard  
+x  
+A demonstration of the capability of providing  
+consumption-based invoicing detailed by customer 
+departments, organizational units, programs, or initiatives. 
+x  
+A demonstration of the ability for the customer to set specific 
+spending budgetary limits per cost-center, Google Cloud 
+project, organization, or other form of customer-level 
+initiatives or projects. 
+x  
+A demonstration of the alerting mechanisms that are 
+triggered when the consumption is approaching or surpassing 
+budgetary thresholds, either those set by the customer or 
+those automatically set by the fraud prevention strategy (see 
+x  
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 23 
+ 
+
+ 
+ 
+control 5.4.1). 
+A demonstration showing that every new customer is created 
+with a Google Cloud monetary spending budget alert, which 
+notifies key personnel in the partner's support and operations 
+team, and a confirmation that these budget alerts trigger a 
+workflow for follow up. 
+x  
+Voluntary advanced capabilities declaration: 
+ 
+ A demonstration of how an existing or fictitious new customer's cost 
+center structure is implemented in the CMP and co-related to tags, 
+projects, folders, and/or billing subaccounts inside Google Cloud. 
+ Demonstration of how the customer can self-provision the 
+distribution of cost and consumption data in their own custom 
+structure. 
+3.4.2 
+Workload 
+optimization 
+As a result of analytics obtained from the collected assets consumption, the 
+partner should be able to provide workload and cost optimization 
+recommendations to customers.  Partner should be able to analyze utilization 
+patterns and provide purchase recommendations using Google Cloud 
+sustained use discounts (SUDs), or recommendations to right-size cloud 
+assets based on performance tracking. 
+ 
+The recommendations to customers can be built using the partner's CMP 
+tools or Google Cloud-native recommendation engine capabilities. 
+ 
+Evidence Required R Met Y/N 
+Provide examples of workload optimization recommendations 
+presented to two distinct customers (can be anonymized).  
+ 
+The evidence must present at least one example of rightsizing 
+recommendations done based on resource performance 
+tracking, and one example of Google Cloud capacity 
+reservation purchase recommendation based on cost 
+tracking. 
+x  
+3.5  
+CMP 
+monitoring 
+and analytics   
+3.5.1  
+Monitoring 
+systems and 
+tools 
+Partner is expected to provide and support proactive monitoring and alerting. 
+Partner must have systems and tools in place to monitor infrastructure and 
+applications on Google Cloud (such as Cloud operations suite). 
+Evidence Required R Met Y/N 
+Provide a documented process / policy demonstrating what is 
+monitored and how. Must show the strategy for monitoring  
+cloud infrastructure resources including at least system health 
+monitoring of VMs, CPU utilization, memory usage, network 
+usage, storage IOPs, and OS performance. 
+x  
+Provide a documented process / policy demonstrating the 
+partner's monitoring deployment strategy. 
+  
+Include a technology demonstration of the partner's 
+monitoring capabilities including a walk through of an 
+  
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 24 
+ 
+
+ 
+ 
+event-driven support case that has been serviced by the 
+partner due to monitoring activities. 
+3.5.2  
+Monitoring 
+analytics  
+Partner must conduct analysis as a result of monitoring activities. 
+ 
+Evidence Required R Met Y/N 
+The partner's CMP must have the capability for aggregating 
+monitoring data with log collection. This can be demonstrated 
+with evidence of the use of Google Cloud operations suite 
+(formerly Stackdriver) and Cloud Logging. 
+x  
+Provide example cases demonstrating that metrics are 
+displayed/assessed and analyzed for customers. 
+  
+3.5.3  
+Monitoring 
+alerts 
+Partner must have processes in place to provide alerts to customers when 
+appropriate, as a result of the above analysis. Alerting must especially include 
+instances of how alerts for anomalous / unexpected surges in customer 
+spend are set, detected and communicated to the customer. 
+Evidence Required R Met Y/N 
+Demonstrate a process in place to identify anomalous or 
+unexpected surges in customer’s Google Cloud spend or 
+resource utilization through the monitoring of customer's 
+deployments.  
+ 
+The demonstration must show the process for the 
+identification of any unusual patterns or trends, and the 
+generation of alerts for anomalous or unexpected surges 
+according to pre-set thresholds, then the demonstration must 
+show how these alerts are sent to the MSP's personnel and to 
+the customer. 
+ 
+x  
+Voluntary advanced capabilities declaration: 
+ 
+ Partner is using ML/AI to identify anomalies more quickly and 
+accurately. ML/AI is used to analyze large amounts of data and helps 
+the MSP identify anomalies more quickly and accurately than 
+manually set thresholds. 
+ Partner is using ML/AI to predict potential anomalies before they 
+occur. The partner demonstrated how ML/AI has been used to 
+analyze historical data and identify patterns that may lead to future 
+anomalies. By predicting potential anomalies before they occur, the 
+MSP can take corrective action to prevent them from happening. 
+ 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 25 
+ 
+
+ 
+ 
+ 
+4.0 Google Cloud product technical knowledge 
+Partner should proficiently support customers across all (200+) Google Cloud services, architect solutions based 
+on business needs, deploy them via automated processes across various environments, and securely manage 
+operations for these cloud-based solutions. 
+ 
+To demonstrate their technical proficiency, the partner must showcase their experience with the technologies 
+listed in sections 4.1.x and 4.2.x. This can be done through a combination of the following: 
+ 
+● Live technical demonstrations of the managed service, actively showcasing the ability to configure, 
+deploy, and manage the technology for one or multiple customers. These demonstrations should 
+highlight active customers and their successful management of the technology. 
+● Documented previous support cases that the partner managed on behalf of customers specifically 
+focusing on the technology in question. These cases should demonstrate the partner's capability to 
+troubleshoot and resolve issues with the product effectively. 
+● Customer record documents showing that the partner has been actively involved in managing the 
+technology for paying customers. These records should demonstrate that the partner had a contractual 
+obligation to support the technology for customers within the last 24 months. 
+ 
+Partners who have not provided qualifying managed services for a customer on some of these technologies 
+within the last 24 months can still demonstrate their capabilities through alternative means. This includes: 
+ 
+● Live Sandbox Technical Demonstration: A live demonstration of the ability to use the product in a 
+managed services context, even if there are no current customers using it. This demonstration should 
+include provisioning and monitoring of the product within a multi-tenant MSP toolset, accompanied by 
+diagrams or documents showcasing how the technology integrates with their cloud management 
+platform. 
+ 
+● Demonstration of internal use in the partner’s CMP: Partners can demonstrate their use of the 
+technology internally within their MSP practice if it fits the following criteria: 
+● The technology is used directly in the partner’s MSP practice.  
+● The technology should indirectly support at least three active MSP customers. 
+ 
+Some examples would be: Consuming Storage Transfer Service during previous customer migrations, 
+securing their ITSM or CMP APIs using Apigee Advanced API Security, Using Vertex AI to develop 
+automated MSP service agents, using BigQuery as the MSP cost-management database, etc. 
+ 
+● Hypothetical Presentation: Partners can provide a document or slides presentation demonstrating 
+their ability to architect and use the product in a managed services environment. This is only applicable 
+if the Google Cloud product is listed in section 4.2.x of the assessment. The presentation must 
+include a technical walkthrough and architecture diagrams for the deployment, monitoring, and 
+management of the technology. 
+ 
+Recommended documentation for hypothetical presentations: 
+○ Design Documents: These documents explain the management processes of the technology in 
+a multi-tenant MSP environment, such as standard operating procedures and baseline capacity 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 26 
+ 
+
+ 
+ 
+planning after migration. 
+○ Slides: While minimizing the number of slides, partners can use technical and operational 
+information in this format to present architecture diagrams of the Google Cloud technology 
+interacting with their CMP for monitoring, deployment, cost management, optimization, etc. 
+ 
+Ultimately, the assessor will see the presentation holistically, from the perspective of potential customers’ 
+technical decision-makers, looking for evidence which shows that the partner: 
+● Possesses knowledge of the technology, 
+● Can deliver a secure and resilient service aligned with their core management value-add, 
+● Contributes to customer's spend optimization and provides recommendations on utilizing the service 
+effectively. 
+Evidence Required 
+   
+Each technology must be demonstrated with at least one valid artifact.  A single customer scenario can be 
+reused to produce artifacts across more than one technology, but in total the partner must show at least three 
+distinct customers across the list (i.e., examples can't be all from a single customer).    
+ 
+Valid artifacts for demonstration of controls 4.1.x are at least one of: 
+ 
+● Artifact 1: SOW or contract with at least one active customer from the last 24 months, specifically 
+mentioning the technology as managed by the MSP 
+● Artifact 2: Live demonstration of the technology being monitored and serviced by the MSP's support 
+team in at least one customer-owned environment 
+● Artifact 3: Live demonstration of the technology used internally in the MSP's cloud management 
+platform, servicing indirectly a minimum of three distinct customers 
+● Artifact 4: Live demonstration of the technology in a sandbox environment showing at least deployment 
+and monitoring activities  
+● Artifact 5: Design documents for the managed service of a previous customer (not older than 24 
+months) showing that the partner implemented managed services beyond the initial migration - 
+examples are capacity planning, monitoring strategy, on-going maintenance plans, regular update 
+processes, standard operations procedures documents. 
+ 
+Note on co-managed scenarios:  
+ 
+For co-managed solutions (i.e., where a partner supported the deployment for a customer and 
+enabled/proposed the monitoring strategy, but the L1 support is mostly done by the customer), we require that 
+the partner presents management opt-out from an active customer, and at least be servicing cost reports and 
+optimization recommendations to be considered a valid evidence artifact for a product in section 4.1.x.  
+ 
+Section 4.1.x - Cloud products in current MSP growth cycle 
+Item Product R Met (Y/N) 
+4.1.1  
+IaaS compute 
+   
+4.1.1.1 Compute Engine x  
+4.1.1.2 App Engine x  
+4.1.1.3 Google Kubernetes Engine x  
+4.1.2  4.1.2.1 Cloud Storage x  
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 27 
+ 
+
+ 
+ 
+Storage and database 4.1.2.2 Cloud SQL x  
+4.1.2.3 Cloud Bigtable x  
+4.1.3  
+Data and analytics  
+4.1.3.1 BigQuery x  
+4.1.3.2 Pub/Sub x  
+4.1.3.3 Looker Studio x  
+4.1.4  
+Identity and security 
+4.1.4.1 Cloud Asset Inventory x  
+4.1.4.2 Cloud Identity x  
+4.1.4.3 Cloud Resource Manager x  
+4.1.4.4 Security Command Center  x  
+4.1.4.5 Web Security Scanner  x  
+4.1.5  
+Management tools 
+4.1.5.1 Google Cloud’s operations suite (formerly Stackdriver) x  
+4.1.5.2 Cloud Monitoring x  
+4.1.5.3 Cloud Logging x  
+4.1.5.4 Cloud Billing export x  
+4.1.6  
+Networking 
+4.1.6.1 Virtual Private Cloud (VPC) x  
+4.1.6.2 Cloud Load Balancing x  
+4.1.6.3 Cloud CDN x  
+4.1.6.4 Cloud Interconnect x  
+4.1.6.5 Cloud DNS x  
+4.1.6.6 Cloud network security x  
+ 
+Valid artifacts for demonstration of controls 4.2.x are at least one of: 
+ 
+● Any of the artifacts valid on section 4.1.x, OR 
+● Artifact 6: A purely-hypothetical scenario presentation showing the management capabilities of the 
+partner for the technology.  The presentation should cover: 
+a. Partner’s standard operating procedures (SOP) document for this technology and the 
+architectural diagram showing the service in the context of the rest of the partner’s CMP. 
+b. A hypothetical user story of how customers interact with your service for day to day operations 
+and during incidents, how operators are alerted when necessary, and how the service interacts 
+with the ITSM / CMP for provisioning, service, and monitoring. 
+ 
+Section 4.2.x - Cloud products in next MSP growth cycle (Forecasted by analysts and Google) or  
+Google Cloud management platform toolset 
+Item Product R Met (Y/N) 
+4.2.1  
+Serverless compute 
+4.2.1.1 Cloud Functions x  
+4.2.1.2 Cloud Run x  
+4.2.2  
+CITSP managed 
+storage and DBs  
+4.2.2.1 Firestore x  
+4.2.2.2 Memorystore x  
+4.2.2.3 Cloud Spanner  x  
+4.2.3  4.2.3.1 Storage Transfer Service  x  
+4.2.3.2 BigQuery Data Transfer Service  x  
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 28 
+ 
+
+ 
+ 
+MSP data stewardship 
+and CITSP managed 
+analytics solutions  
+4.2.3.3 Dataflow  x  
+4.2.3.4 Cloud Data Fusion or Dataprep  x  
+4.2.3.5 Dataproc x  
+4.2.4  
+Hybrid and multi 
+cloud management 
+4.2.4.1 Anthos x  
+4.2.4.2 Anthos Service Mesh x  
+4.2.4.3 Cloud Build x  
+4.2.4.4 Apigee and/or Apigee Hybrid x  
+4.2.4.5 Advanced API Security (formerly Apigee Sense), or equivalent 
+technology in the partner's CMP to secure customer's APIs 
+x  
+ 
+The following controls are for tools that are only available for reselling partners.  Non-reselling MSPs are excluded 
+from having to demonstrate proficiency in controls 4.2.5.x.   
+ 
+4.2.5  
+Google Cloud 
+management 
+platform toolset  
+4.2.5.1 Partner Sales Console x  
+4.2.5.2 Service Catalog (formerly Private Catalog)  x  
+4.2.5.3 Cloud Billing API x  
+ 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 29 
+ 
+
+ 
+ 
+ 
+5.0 Security 
+Item Requirement Description 
+5.1  
+Security 
+management 
+5.1.1  
+Security 
+policies and 
+procedures 
+Partner must have security policies and procedures for the protection of 
+internal and customer systems, including their physical and network security, 
+logical data protection, server access and multi-factor authentication, and 
+application-level security practices.  
+ 
+Evidence Required R Met Y/N 
+Documentation showing the established security policies 
+and procedures used on current managed services 
+customers, including: 
+● Demonstration of network security monitoring 
+activities  
+● Documentation of multi-factor authentication 
+practices covering all elevated security processes or 
+personnel accessing customer infrastructure  
+● Provide documentation of an established process to 
+continuously review that elevated access is provided 
+under the basis of Just-in-Time (JIT) and 
+Just-Enough (JE).  
+● Elevated privileges must have an automatic  
+expiration   
+● Granted privileges are only those that are 
+necessary to fulfill the required task  
+● A demonstration of the partner’s approach to 
+protecting data sources like databases or data lakes  
+x  
+OR 
+Provide current certification to ISO 27001. 
+ 
+x  
+Voluntary advanced capabilities declaration: 
+ 
+ Demonstration included results of previous security validations 
+executed on customer infrastructure and/or applications for at least 
+two customers under management. 
+ 
+5.1.2  
+Security 
+management 
+review 
+Partner must ensure that security management policies and procedures are 
+reviewed, approved, and communicated throughout the organization.  
+Evidence Required R Met Y/N 
+Partner must provide records of review, approval, and 
+communication of security management policies and 
+procedures. 
+x  
+OR 
+Provide current certification to ISO 27001. 
+ 
+x  
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 30 
+ 
+
+ 
+ 
+5.2  
+User account 
+and credentials 
+management 
+5.2.1  
+User account 
+provisioning 
+and 
+management 
+Partner must have a process for managing access to Google Cloud 
+resources by defining who (principal) has what access (role). These principals 
+can be individual user accounts associated with customers or partner staff, 
+as well as service accounts for applications or compute workloads. 
+ 
+This procedure should include clearly documented governance methods 
+outlining the Identity and Access Management (IAM) policies for these 
+principals. Specifically, it should encompass workflows for defining, granting, 
+modifying, and revoking roles which group the permissions that a principal 
+needs. These roles, encapsulating the required permissions, are then 
+assigned to the authenticated principals. The IAM policies should be enforced 
+consistently across their customer base and among security personnel and 
+must be continuously validated. 
+ 
+Following the principle of least privilege (PoLP), the MSP should ensure that 
+roles granted to principals contain only the minimum set of permissions 
+required for their tasks or system functions. Rather than assigning individual 
+permissions, the process assigns roles which group the necessary 
+permissions. 
+ 
+Moreover, audits must be conducted routinely within internal and customer 
+environments to identify and revoke any principal's role that no longer aligns 
+with the least privilege principle. This includes any other access components 
+such as SSH Keys, passwords, high-level scripts, and credential hashes that 
+are associated with the principal's identity. 
+ 
+Evidence Required R Met Y/N 
+Demonstrations of the products and tools used to provision 
+and deprovision named Google Cloud user accounts with 
+access to customer workloads which exist outside of the 
+partner organization.   
+ 
+Must include the following: 
+ 
+● All types of accounts (partner's support personnel 
+accounts, customer staff accounts, and service 
+system accounts) must have a documented life 
+cycle, showing password policies, revocation times, 
+access times, and when privileged roles are provided 
+● Identity and Access Management system provides 
+Role-based access control (RBAC), such as privileges 
+are assigned to roles/groups and not directly to user 
+or system accounts   
+x  
+OR 
+Provide current certification to ISO 27001. x  
+5.2.2  MSPs handle customer data across diverse systems and geographical 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 31 
+ 
+
+ 
+ 
+Multi-factor 
+authenticatio
+n (MFA) 
+locations, amplifying the potential risk of cyber attacks.  Partner must ensure 
+that Multi-factor authentication (MFA) is implemented pervasively, and 
+managed through security policies that are applied and verified continuously 
+across their customer base and support personnel.   
+ 
+Evidence Required R Met Y/N 
+Provide evidence of the use of multi-factor authentication 
+(MFA) as a requirement for any partner personnel to access 
+sensitive customer data and to access the partner's own 
+management systems. Partner must have a comprehensive 
+document in place outlining the partner's MFA procedures, 
+protocols, and types of factors used for authentication  
+x  
+5.3  
+Disaster 
+recovery  
+5.3.1  
+Disaster 
+recovery 
+planning 
+Partner must plan for business continuity and disaster recovery (BCDR) to 
+ensure continued operation during outages. The BCDR plan should be 
+communicated internally throughout the partner's organization, and shared 
+with customers, and must cover multiple scenarios and foreseeable events 
+that the partner identifies as potentially blocking them to provide the 
+managed service for the customer.  
+ 
+Evidence Required R Met Y/N 
+Provide records of the BCDR plan testing within the past 12 
+months. 
+x  
+Provide an established, documented, and implemented 
+business continuity process for the partner's managed 
+service operations and infrastructure.  Include evidence 
+showing that the partner’s managed services personnel are 
+aware of the plan and participate in testing. 
+  
+Demonstrate that the plan includes a recovery strategy and 
+the necessary response plans to communicate and provide 
+minimal support to customers during outages. 
+  
+OR 
+Provide current certification to ISO 22301 x  
+5.4  
+Fraud protection 
+5.4.1  
+Fraud 
+protection 
+Partner is expected to have safeguards in place to prevent fraudulent 
+spending on Google Cloud for workloads the partner is financially 
+responsible for. 
+ 
+In principle, every customer that the partner is financially responsible for 
+(managed service or resell) should be assigned a minimal budgetary cap and 
+the partner should have processes and tools in place to ensure that this 
+budget is not exceeded, and to alert when spending approaches it.    
+ 
+The toolset should also be able to collect events coming from disparate 
+systems (such as workload monitoring, intrusion detection, logs, network 
+operations, and/or configuration changes coming from the partner's CMDB) 
+and co-relate them into single units of data that allow the partner to detect 
+new fraudulent customer behavior patterns. 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 32 
+ 
+
+ 
+ 
+ 
+The partner must have a process in place to provide their commercial and 
+sales personnel with the necessary correlated data to avoid fraudulent 
+companies to sign-up or to stay in their service. 
+ 
+ 
+Evidence Required R Met Y/N 
+Provide documentation regarding the partner's policy to 
+mitigate against fraudulent account creation and activity. 
+x  
+Provide evidence showing spend monitoring for all 
+workloads the partner is financially responsible for.  
+x  
+Demonstrate how during the onboarding process, every new 
+customer is assigned a budgetary spending limit according 
+to their size and trust-level, and that alerts are triggered to 
+on-call support personnel available 7x24, when cloud 
+spending approaches this threshold.   
+x  
+Demonstrate that a process is available and documented to 
+deal with fraudulent spending detections, including 
+suspension of the offending account if necessary. 
+x  
+Voluntary advanced capabilities declaration: 
+ 
+ Existing tools for correlating security incidents from different systems 
+(such as security information and event management [SIEM] tool or 
+equivalent functionality) targeted at identifying resource 
+consumption surges or unusual spending patterns in existing 
+accounts under management.     
+ Ability of detecting and automatically suspending accounts that incur 
+in crypto mining. 
+ 
+ 
+ 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 33 
+ 
+
+ 
+ 
+ 
+6.0 Assessment, design, and migration  
+Item Requirement Description 
+6.1  
+PartnerSpecial
+izations 
+6.1.1  
+PartnerSpecia
+lizations 
+ 
+Partner must have achieved and hold at least two out of the three following 
+Partner Specializations 
+ 
+Evidence Required R Met Y/N 
+Partner holds a currently active Google Cloud Infrastructure 
+Specialization.  
+x  
+Partner holds a currently active Google Cloud Application 
+Development - Services Specialization.  
+x  
+Partner holds a currently active Google Cloud  
+Migration - Services Specialization.  
+x  
+6.2 
+Infrastructure 
+assessment 
+and design 
+processes and 
+tools 
+6.2.1 
+Infrastructure 
+assessment 
+(Section 6.2 can be considered fully met if the partner holds a Google 
+Cloud Infrastructure Specialization) 
+ 
+MSPs in the initiative offer processes to discover and assess the customer's 
+current on-premises infrastructure architecture.  These partners are able to 
+rationalize the customer's existing service management workflows and ITSM 
+tools to adapt and integrate them as part of their managed service. 
+ 
+A demonstration of the process, workflows, and diagrams used to execute 
+standard infrastructure assessment and reports for at least two customers will 
+be required in this control.  
+Evidence Required R Met Y/N 
+Provide documentation that demonstrates how the partner 
+captures customer requirements associated with the 
+datacenter environment that will be operated. 
+x  
+Provide documentation showing the outcome of discovery 
+tools and measurements, or manual surveys utilized by the 
+partner to determine the installed infrastructure, in at least 
+two customer scenarios. 
+x  
+Documentation showing the capability of identifying 
+infrastructure requirements, system performance, capacity 
+management, and availability measurement. 
+x  
+Provide results of cost estimations and capacity planning 
+activities executed with customers. 
+  
+6.3  
+Application 
+assessment, 
+design and 
+development 
+processes 
+ 
+ 
+6.3.1  
+Application 
+assessment, 
+design and 
+development 
+(Section 6.3 can be considered fully met if the partner holds a Google 
+Application Development Specialization) 
+ 
+MSP partners who offer application development and application management 
+have processes in place to discover and assess the customer's application 
+architecture as well as developing or refactoring solutions to become 
+managed apps in Google Cloud.   
+ 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 34 
+ 
+
+ 
+ 
+A demonstration of the process, workflows and diagrams used to execute 
+standard application assessment and management will be required in this 
+control.   
+  
+Evidence Required R Met Y/N 
+Documentation that shows a delivery approach is in place for 
+reviewing applications in their current state and identifying 
+the requirements to move such applications to Google Cloud, 
+which at a minimum should include:   
+● Design of the support requirements necessary to 
+meet customer application requirements in the cloud   
+● Mapping of service support processes and SLOs for 
+application management 
+x  
+Voluntary advanced capabilities declaration: 
+ 
+ Partner demonstrated the capability of providing application 
+architectural reviews. 
+ Partner demonstrated the capability to develop new applications 
+based on customer requirements or refactor existing application code 
+to operate as a managed service in Google Cloud. 
+ Partner showed at least two customer applications currently under 
+management in Google Cloud with specific SLOs agreed in customer 
+to partner signed documents. 
+ Partner's demonstration included a clear approach to offer managed 
+DevOps to customers, showing tools for source control, CI/CD, code, 
+and configuration management. 
+6.4  
+Migration 
+processes and 
+tools 
+ 
+  
+ 
+6.4.1  
+Infrastructure 
+and 
+application 
+migration 
+processes 
+(Section 6.4 can be considered fully met if the partner holds a Google 
+Cloud Migration - Services Specialization) 
+ 
+Partner must have documented capability to migrate customer infrastructure 
+and applications from on-premises and/or from other cloud providers to 
+Google Cloud, offering the ability to deploy, secure, run, monitor, and configure 
+virtualized and application workloads. 
+ 
+A demonstration of the processes and tools for assessing and planning 
+migrations, and reports for at least two customer migrations executed by the 
+partner will be required in this control.   
+ 
+Evidence Required R Met Y/N 
+Technology demonstrations of at least two migrations of 
+customer infrastructure and/or applications for current 
+managed services customers done in the last 24 months.   
+x  
+Provide information about the size of the infrastructure that 
+was migrated (# of applications, # of VMs, # of containers, # 
+of databases).   
+x  
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 35 
+ 
+
+ 
+ 
+Partner must operate a publicly available website promoting 
+the partner’s migration practice to Google Cloud from 
+on-premises or from other cloud providers. 
+x  
+Demonstrate that the assessment process includes wave 
+planning, move groups recommendations, and 
+customer/partner joint plans to define service and customer 
+solution roadmaps. 
+  
+Voluntary advanced capabilities declaration: 
+ 
+ The demonstration shows abilities to analyze applications in their 
+current state and abstract application deployment from infrastructure 
+requirements. 
+ Migration of servers and other infrastructure components is done 
+using infrastructure-as-code tools. 
+ The demonstration included refactoring or rearchitecting of at least 
+two applications into Google Cloud serverless and/or container 
+services. 
+6.4.2  
+Migration 
+tools 
+Partner must use in-house or third-party products or tools during the 
+migration process, including for service provisioning, migration of data and 
+infrastructure, and automated provisioning, de-provisioning, and deployment.  
+ 
+Evidence Required R Met Y/N 
+Evidence must include technology demonstrations of the 
+applicable tools. 
+x  
+Evidence must include either two Statements of Work for 
+migration customers where the demonstrated tools are 
+referenced, or provide the output/snapshots/results of at 
+least two migration processes conducted using the 
+applicable tools. 
+x  
+ 
+ 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 36 
+ 
+
+ 
+ 
+ 
+7.0 Customer Success, optimization, satisfaction, and improvement 
+Item Requirement Description 
+7.1 
+Customer 
+success  
+7.1.1 
+Customer 
+success 
+practice (post 
+migration to 
+Managed 
+Services) 
+Partner must demonstrate that a documented customer success strategy 
+exists and is executed after a migration to the managed service. This strategy 
+ensures that the customer effectively adopts Google Cloud technologies and 
+the partner's management services.   
+ 
+The process begins with the collaborative development of a Customer 
+Success Plan which reflects the customer’s business objectives and technical 
+requirements, and guides a hand-off from the project/account team to the 
+customer success team for the Adopt and Expand phases of the project.  
+ 
+During the Adopt phase, the partner should provide additional support such as 
+knowledge transfer, use-case workshops, and change-management plans to 
+help the customer embrace and leverage the service. The Expand phase is 
+about identifying opportunities to broaden the use of the technology, and 
+propel customer value and satisfaction.  
+ 
+Partner should also develop a Customer Ramp Plan showing each the 
+adoption goals, the milestones for each workload, and the timeline to achieve 
+success.  The partner should maintain a regular communication cadence to 
+continuously update the Customer Ramp Plan with progress on established 
+solutions and to identify new workloads in the customer's environment. 
+Throughout the process, the partner should maintain regular Success Reviews 
+to validate that the proper governance is in place to manage the solution.  
+ 
+The customer success strategy implementation requires a Customer Health 
+Score system to monitor subscription well-being, considering the extent of 
+technology usage, critical ("golden") feature adoption, success plan adherence, 
+and Annual Recurring Revenue (ARR) growth. A color-coded score triggers 
+call-to-actions for proactive engagement by the customer success team when 
+benchmarks are missed or to optimize service usage. 
+ 
+Additional information and example templates:  
+ 
+● 
+Partner Revenue Consumption Framework for MSPs & Resellers 
+● 
+Customer Success Plan example template 
+● 
+Customer Ramp Plan example template  
+● 
+Customer Quarterly Business Review example template 
+ 
+(Links require access to the Partner Advantage portal) 
+ 
+Evidence Required 
+(All customer examples can be anonymized) 
+R Met Y/N 
+Provide comprehensive documentation detailing the   
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 37 
+ 
+
+ 
+ 
+transition process from the account/project team to the 
+customer success team. This must demonstrate a 
+well-defined procedure for the Adopt and Expand phases of 
+a project. It must articulate how the customer success team 
+engages in facilitating knowledge transfer, conducting 
+use-case workshops, and providing a detailed 
+communication plan to ensure smooth customer transition 
+into the technology utilization. Additionally, it should depict 
+strategies for identifying opportunities to expand services, 
+driving higher customer value and satisfaction. 
+Demonstrate that Customer Success Plans are created for 
+customers under management and show the plans for at 
+least two of them.  The plans must cover the customer's 
+business goals, success action plan, workstreams, account 
+engagement model, learning strategy, and adoption actions 
+plans. 
+x  
+Demonstrate that ramp plans are created for customers 
+under management and show the plans for at least two of 
+them. This plan must include customer workloads that will be 
+ramped to Google Cloud, tracking of consumption for the 
+different workloads, consumption milestones showing if the 
+customer is adopting deployed technology or not, project 
+timelines, deliverables, and ownership for any inflight 
+deployments adding more consumption to Google Cloud. 
+x  
+Demonstrate that Quarterly Business Reviews (QBR) or 
+Quarterly Success Reviews (QSR) are executed with strategic 
+or committed customers and show example reviews for at 
+least two of them. The QBR or QSR must be aligned with the 
+Customer Success Plan and must include topics beyond SLA 
+metrics tracking, being at least the utilization of current 
+technology, new growth opportunities, achievement of 
+customer business goals, and call-to-actions for the adoption 
+of new workloads. 
+x  
+7.2 
+Optimization  
+7.2.1  
+Optimization 
+opportunities  
+Partner must identify and act on opportunities for optimization of customer 
+application performance, Google Cloud usage, and/or cost.  
+ 
+Partners who show advanced capabilities in this category proactively tune 
+settings in applications, move them to more cost-effective environments, or 
+optimize application code; they save costs by identifying unused resources and 
+right-sizing them.  The partner will also add value to the customer by helping 
+them identify potential computing resource reservations and commit pricing 
+levels, and by collaboratively maintaining ramp plans per workload with the 
+customer.     
+Evidence Required R Met Y/N 
+Provide process documentation used by their personnel 
+describing how opportunities for optimizing the customer's  
+application performance or the costs associated with running 
+them are identified and actioned. 
+  
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 38 
+ 
+
+ 
+ 
+Provide records of this process execution, resulting in 
+implemented optimizations. 
+x  
+7.3  
+Customer 
+satisfaction 
+7.3.1  
+Customer 
+satisfaction 
+data 
+Partner must solicit and capture customer feedback.  
+ 
+Evidence Required R Met Y/N 
+Provide evidence of customer satisfaction data collection. 
+Examples could be testimonials or satisfaction surveys. 
+  
+7.3.2  
+Customer 
+satisfaction 
+review  
+Partner must review and analyze customer satisfaction data, and act on any 
+low scores or complaints.  
+ 
+Partners should consistently review and analyze customer satisfaction data, 
+including survey results, feedback forms, and social media mentions to identify 
+dissatisfied areas and develop improvement strategies. Recognizing trends 
+and patterns in this data is crucial for targeted strategy development. 
+Furthermore, partners must address low scores or customer complaints 
+proactively by investigating and resolving issues, and ensuring effective 
+communication with the customer for their satisfaction with the resolution. 
+ 
+Evidence Required R Met Y/N 
+Provide process documentation regarding how the partner 
+acts on the customer satisfaction data they collect. 
+x  
+Provide evidence that includes records of actions taken due 
+to low score customer feedback or customer complaints. 
+  
+7.3.3 
+Customer 
+favorability 
+To measure ongoing customer likelihood to recommend the MSP services, 
+partners must provide the customer with the ability to rate their Managed 
+Services interaction experiences. 
+ 
+For cases where the partner has not yet implemented a system for customers 
+to provide feedback, Partner Advantage offers the ability to direct customers 
+to the Net Promoter Score (NPS) survey.  To learn more, including how to 
+request aggregated read-outs, refer to this NPS one-pager. 
+Evidence Required R Met Y/N 
+Demonstrate examples where the completion of customer 
+experience survey was requested from customers after a 
+migration or net-new deployment was executed, via a 
+partner-operated system or the NPS survey. 
+x  
+Demonstrate examples where the completion of NPS survey 
+was requested from customers after resolving customer 
+support requests, via a partner-operated system, or the NPS 
+survey.   
+x  
+7.4  
+Continual 
+improvement 
+7.4.1  
+Continual 
+improvement 
+methodology 
+Partner must have a process in place for identifying opportunities for continual 
+improvement within their practice area, through the use of Key Performance 
+Indicators (KPIs) or other metrics.  
+ 
+This entails regularly identifying potential service enhancements through client 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 39 
+ 
+
+ 
+ 
+feedback and operational data analysis, setting SMART goals for service 
+optimization, and creating actionable plans to meet these goals. MSPs help 
+customers connect their business outcomes to a set of objectives in their 
+cloud technologies platform, maintaining an ongoing cycle of reflection, and 
+adjustment to strategies based on new opportunities or challenges, promoting 
+sustained growth and continuous service improvement. 
+ 
+Evidence Required R Met Y/N 
+Provide a documented continual improvement methodology, 
+and evidence of metrics collection and analysis. 
+  
+7.4.2  
+Continual 
+improvement 
+activity 
+Partner must implement actions to drive improvements as identified by the 
+continual improvement process.  
+ 
+Partner should conduct in-depth reviews of the current service delivery, 
+considering customer feedback, team performance metrics, and financial 
+indicators. Evaluate feedback from key stakeholders including clients, team 
+members, and Google Cloud representatives to identify improvement 
+opportunities. 
+ 
+Partners usually first improve their incident response times, client onboarding, 
+or cloud cost optimization processes. While they strive to enhance specific 
+Google Cloud service proficiency capabilities and expand their Google Cloud 
+service offerings, they start investing in advanced automation capabilities.  
+Advanced partners in this category have established partnerships for 
+specialized Google Cloud services with other third-party vendors and/or 
+developed proprietary Google Cloud optimization tools. 
+Evidence Required R Met Y/N 
+Provide records of continual improvement activities. 
+ 
+x  
+ 
+ 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 40 
+ 
+
+ 
+ 
+Appendix 1: Adding Affiliates and Regional Expansions 
+ 
+Affiliated Partner 
+An Affiliated Partner is an entity that directly or indirectly controls, is controlled by, or is under common 
+control with a partner that has been authorized to participate in the Google Cloud MSP Initiative (such 
+partner is referred to as the “Parent Partner”) in accordance with the terms of the MSP Initiative Program 
+Guide. 
+ 
+Nomination and Affiliated Partner MSP Initiative prerequisites 
+To qualify for the Google Cloud MSP Initiative, the Parent Partner must have nominated the Affiliated 
+Partner to participate in the MSP Initiative, and the Affiliated Partner must:  
+■ Satisfy MSP Initiative prerequisites 
+■ Receive a MSP Initiative invitation based upon prerequisites being met 
+■ Complete an assessment with ISSI (third-party assessment firm)  
+■ Receive a “Pass” decision on the assessment from Google Cloud MSP Initiative team 
+■ Provide contact information for the nominated Affiliated Partner 
+ 
+To qualify for the MSP Initiative, Affiliated Partners must satisfy the prerequisites outlined in the guide. 
+Additionally, participating affiliates in the MSP program are collectively required to maintain a minimum 
+of twelve full-time employees who possess a valid Professional Cloud Architect certification. For clarity, 
+if an affiliate company directly employs three PCAs, this requirement is considered met as long as the 
+total number of PCAs across all MSP-participating affiliated companies in the MSP initiative, including the 
+one being evaluated to join or renew, is twelve or more. 
+ 
+ 
+Regional expansion  
+ 
+Regional expansion is the expansion of an existing partner into a new region that involves a new partner 
+Authorization and encompasses a partner's Engagement Model, applicable region, and product. 
+ 
+Partner assessment types   
+ 
+Affiliated Partner - Full Assessment 
+Affiliated Partners who maintain their own operations and support structure independent from the 
+Parent Partner will be required to undergo a Full Assessment pursuant to the requirements in Sections 
+1.0 through 7.0 of this document.  
+ 
+Affiliated Partner - Partial Assessment 
+Affiliated Partners with onsite support who have the same systems, tools, and processes as the Parent 
+Partner, and who source their assessment, design and migration processes from the Parent Partner, will 
+undergo a remote partial assessment pursuant to the requirements in Sections  2.x, 3.1.x, 5.x and 7.x of 
+this document. Partners should plan to spend approximately 6-8 hours on their New-Cycle Partial 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 41 
+ 
+
+ 
+ 
+Assessment, or 4-6 hours if they will undergo a Renewal Partial Assessment; see the corresponding 
+sections of this checklist for expected evidence.  
+ 
+ 
+At the close of the assessment, the Assessor will present a brief synopsis of the results. Opportunities 
+for improvement will also be presented. If there are any open action items, the partner will be given an 
+opportunity to provide written evidence of closure to the Assessor within five business days after 
+completion of assessment / reassessment. After five business days have passed, the Assessor will 
+forward a final report to Google Cloud. The Google Cloud MSP Initiative team will make a decision and 
+inform the partner regarding admittance to the Google Cloud MSP Initiative. 
+ 
+Regional Validation Assessment 
+Regional Sales Offices of Affiliated Partners or partners with regional expansion who have no onsite 
+support structure and are fully centralized with the Parent Partner’s systems, tools, and processes will 
+undergo a Regional Validation Assessment. These partners may be assessed as part of the Parent 
+Partner’s initial assessment or as a standalone remote assessment of approximately 1 hour. These 
+partners will be expected to provide evidence including but not limited to:  
+ 
+■ Published managed service catalog in local language related to Google Cloud (such as on 
+website) 
+■ Examples of support tickets for local customers of the regional office – incidents, problems, or 
+escalations - Assessor will cross-check that processes and tools used to attend these support 
+tickets are from the Parent Partner 
+■ SLA evidence – Assessor will validate that SLAs are aligned with those from Parent Partner 
+■ Service reporting – Assessor will request reports where it can be verified that the same tooling is 
+in use as at the Parent Partner (monitoring, service performance, etc.) 
+ 
+The entity being validated needs to present evidence of their local managed services offer, using the 
+company overview and Google Cloud managed services web presence, following the controls 1.1.1 and 
+1.3.2 of the MSP Assessment Checklist.  
+ 
+The Assessor will also validate that the controls 2.4, 2.10 and 2.11, taken from the latest Full MSP 
+Assessment conducted to the Parent Partner, are followed by the regional office who will have to 
+demonstrate that the local Managed Services offer follows the same process to manage incidents, 
+problems, and escalations, and that they offer the same Support SLAs and Reporting as the Parent 
+Partner.  The Assessor will validate that all of these services are provided from the Parent Partner's 
+central support operation and that the local/regional office doesn't have separate support operations.   
+ 
+During the closing meeting at the end of the regional validation assessment, the Assessor will indicate 
+whether sufficient evidence has been provided to demonstrate that the partner’s activities in the new 
+region are consistent with the operations and support activities of the Parent Partner.  Formal 
+notification of compliance or noncompliance will be provided to the Google Cloud MSP Initiative team, 
+who will then communicate such notification to the nominated Affiliated Partner. In the case that the 
+partner is missing evidence, the Affiliated Partner will have to schedule a new Regional Validation 
+Assessment at a later date. 
+ 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 42 
+ 
+
+ 
+ 
+This Regional Validation Assessment will only be used to activate regions for commercial needs related to 
+currency or tax requirements. Examples of valid offices/entities who can do a Regional Validation 
+Assessment include:  
+ 
+● Same partner entity delivering / commercializing cloud services, but in a different region than the 
+headquarters and will still be using the centralized MSP Operations team of the Parent Partner 
+for support delivery 
+● Affiliate is a new or existing sales office for the Parent Partner with no MSP support services 
+on-site 
+ 
+Google Cloud MSP Capabilities Assessment v4.2 (Sep 2025)       GOOGLE CONFIDENTIAL 43 
+ 
