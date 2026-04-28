@@ -184,7 +184,10 @@ export default function AuditSetupPanel() {
         }),
       });
 
-      if (!res.ok) throw new Error('Chat request failed');
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'Chat request failed');
+      }
 
       const reader = res.body?.getReader();
       if (!reader) throw new Error('No reader');
@@ -222,9 +225,10 @@ export default function AuditSetupPanel() {
         .replace(/<!--CHECKLIST_UPDATE:[\s\S]*?-->/g, '')
         .trim();
       updateLastAssistantMessage(cleanText);
-    } catch {
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unknown error';
       updateLastAssistantMessage(
-        'Sorry, an error occurred while analysing your documents. Please try again.'
+        `Sorry, an error occurred while analysing your documents: ${msg}. Please try again.`
       );
     } finally {
       setIsStreaming(false);

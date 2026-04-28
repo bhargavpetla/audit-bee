@@ -66,7 +66,10 @@ export default function ChatPanel() {
         }),
       });
 
-      if (!res.ok) throw new Error('Chat failed');
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || 'Chat failed');
+      }
 
       const reader = res.body?.getReader();
       if (!reader) throw new Error('No reader');
@@ -104,9 +107,10 @@ export default function ChatPanel() {
         .replace(/<!--CHECKLIST_UPDATE:[\s\S]*?-->/g, '')
         .trim();
       updateLastAssistantMessage(cleanText);
-    } catch {
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unknown error';
       updateLastAssistantMessage(
-        'Sorry, an error occurred. Please try again.'
+        `Sorry, an error occurred: ${msg}. Please try again.`
       );
     } finally {
       setIsStreaming(false);
