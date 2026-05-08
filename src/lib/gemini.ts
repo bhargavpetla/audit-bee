@@ -17,6 +17,6 @@ function getGenAI() {
 
 export function getModel() {
   return getGenAI().getGenerativeModel({
-    model: 'gemini-2.0-flash',
+    model: 'gemini-2.5-flash',
   });
 }
