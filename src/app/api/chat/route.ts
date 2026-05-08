@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { Content } from '@google/generative-ai';
 import { getModel } from '@/lib/gemini';
 import { buildPrompt } from '@/lib/prompt-builder';
 import { ChatMessage, UploadedDocument, ProgramSection } from '@/lib/types';
@@ -54,7 +55,8 @@ export async function POST(request: NextRequest) {
     }));
 
     const chat = model.startChat({
-      systemInstruction: { text: systemInstruction },
+      // SDK types require 'role' but the API must not receive it for system_instruction
+      systemInstruction: { parts: [{ text: systemInstruction }] } as Content,
       history: chatHistory,
     });
 
