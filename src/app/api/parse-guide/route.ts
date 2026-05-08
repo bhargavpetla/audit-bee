@@ -44,6 +44,8 @@ export async function POST(request: NextRequest) {
       fileName: file.name,
       totalEvidence,
       textLength: rawText.length,
+      // Truncated to 80 KB — enough for the AI's system prompt context
+      rawText: rawText.slice(0, 80000),
     });
   } catch (error) {
     console.error('Guide parse error:', error);

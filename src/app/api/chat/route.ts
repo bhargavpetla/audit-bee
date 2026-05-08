@@ -13,12 +13,14 @@ export async function POST(request: NextRequest) {
       sectionId,
       guideSections,
       guideTitle,
+      guideRawText: bodyRawText,
     }: {
       messages: ChatMessage[];
       documents: UploadedDocument[];
       sectionId: string;
       guideSections?: ProgramSection[];
       guideTitle?: string;
+      guideRawText?: string;
     } = body;
 
     if (!sectionId) {
@@ -31,8 +33,8 @@ export async function POST(request: NextRequest) {
     const lastUserMessage =
       messages.filter((m) => m.role === 'user').pop()?.content || '';
 
-    // Use server-side stored raw text instead of client-sent
-    const guideRawText = getGuideRawText();
+    // Prefer client-supplied raw text (works on Vercel serverless); fall back to in-memory store
+    const guideRawText = bodyRawText || getGuideRawText();
 
     const { systemInstruction, userContent } = buildPrompt(
       sectionId,
@@ -52,10 +54,7 @@ export async function POST(request: NextRequest) {
     }));
 
     const chat = model.startChat({
-      systemInstruction: {
-        role: 'user' as const,
-        parts: [{ text: systemInstruction }],
-      },
+      systemInstruction,
       history: chatHistory,
     });
 

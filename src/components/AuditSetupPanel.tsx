@@ -74,7 +74,7 @@ export default function AuditSetupPanel() {
         await new Promise(r => setTimeout(r, 600));
 
         setGuide(
-          { title: data.title, sections: data.sections, totalEvidence: data.totalEvidence, textLength: data.textLength },
+          { title: data.title, sections: data.sections, totalEvidence: data.totalEvidence, textLength: data.textLength, rawText: data.rawText },
           data.fileName
         );
       } catch (err) {
@@ -181,10 +181,14 @@ export default function AuditSetupPanel() {
           sectionId: selectedSection,
           guideSections: guide.sections,
           guideTitle: guide.title,
+          guideRawText: guide.rawText,
         }),
       });
 
-      if (!res.ok) throw new Error('Chat request failed');
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody.error || `Request failed (${res.status})`);
+      }
 
       const reader = res.body?.getReader();
       if (!reader) throw new Error('No reader');
@@ -222,9 +226,11 @@ export default function AuditSetupPanel() {
         .replace(/<!--CHECKLIST_UPDATE:[\s\S]*?-->/g, '')
         .trim();
       updateLastAssistantMessage(cleanText);
-    } catch {
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[Audit Bee] Analysis error:', err);
       updateLastAssistantMessage(
-        'Sorry, an error occurred while analysing your documents. Please try again.'
+        `Sorry, an error occurred while analysing your documents: ${msg}. Please try again.`
       );
     } finally {
       setIsStreaming(false);
