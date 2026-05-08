@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     }));
 
     const chat = model.startChat({
-      systemInstruction: { parts: [{ text: systemInstruction }] },
+      systemInstruction: { text: systemInstruction },
       history: chatHistory,
     });
 
