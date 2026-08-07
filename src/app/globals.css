@@ -23,24 +23,45 @@ body {
 }
 
 /* Markdown styles in chat */
+.chat-markdown > *:first-child {
+  margin-top: 0;
+}
+.chat-markdown > *:last-child {
+  margin-bottom: 0;
+}
 .chat-markdown h2 {
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  margin-top: 1rem;
+  margin-top: 1.25rem;
   margin-bottom: 0.5rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid #EDE9FE;
   color: #1E1B2E;
 }
 .chat-markdown h3 {
-  font-size: 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 0.35rem;
+  color: #5B21B6;
+}
+.chat-markdown h4 {
+  font-size: 0.85rem;
   font-weight: 600;
   margin-top: 0.75rem;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.25rem;
   color: #374151;
 }
 .chat-markdown ul {
-  list-style: disc;
-  padding-left: 1.25rem;
+  list-style: none;
+  padding-left: 0;
   margin: 0.35rem 0;
+}
+/* Verdict bullets already lead with ✅ / ⚠️ / ❌, so no marker is needed.
+   Nested lists fall back to discs. */
+.chat-markdown ul ul {
+  list-style: disc;
+  padding-left: 1.1rem;
 }
 .chat-markdown ol {
   list-style: decimal;
@@ -48,8 +69,8 @@ body {
   margin: 0.35rem 0;
 }
 .chat-markdown li {
-  margin: 0.2rem 0;
-  line-height: 1.5;
+  margin: 0.3rem 0;
+  line-height: 1.55;
 }
 .chat-markdown p {
   margin: 0.35rem 0;
@@ -57,6 +78,52 @@ body {
 }
 .chat-markdown strong {
   font-weight: 600;
+  color: #1E1B2E;
+}
+.chat-markdown em {
+  color: #4B5563;
+}
+.chat-markdown a {
+  color: #7C3AED;
+  text-decoration: underline;
+}
+.chat-markdown hr {
+  border: 0;
+  border-top: 1px solid #EDE9FE;
+  margin: 1rem 0;
+}
+.chat-markdown blockquote {
+  border-left: 3px solid #C4B5FD;
+  padding-left: 0.75rem;
+  margin: 0.5rem 0;
+  color: #4B5563;
+}
+
+/* Tables (coverage summaries, comparison grids) */
+.chat-markdown .table-scroll {
+  overflow-x: auto;
+  margin: 0.6rem 0;
+}
+.chat-markdown table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.8rem;
+}
+.chat-markdown th,
+.chat-markdown td {
+  border: 1px solid #E5E7EB;
+  padding: 0.35rem 0.6rem;
+  text-align: left;
+  vertical-align: top;
+}
+.chat-markdown th {
+  background: #F5F3FF;
+  font-weight: 600;
+  color: #1E1B2E;
+  white-space: nowrap;
+}
+.chat-markdown tbody tr:nth-child(even) td {
+  background: #FAFAFF;
 }
 .chat-markdown code {
   background: #F3F4F6;

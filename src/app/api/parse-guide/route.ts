@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { parseDocument } from '@/lib/document-parser';
 import { parseGuideText } from '@/lib/guide-parser';
-import { setGuideRawText } from '@/lib/guide-store';
+import { setGuideRawText, MAX_GUIDE_TEXT_CHARS } from '@/lib/guide-store';
 
 export async function POST(request: NextRequest) {
   try {
@@ -44,8 +44,7 @@ export async function POST(request: NextRequest) {
       fileName: file.name,
       totalEvidence,
       textLength: rawText.length,
-      // Truncated to 80 KB — enough for the AI's system prompt context
-      rawText: rawText.slice(0, 80000),
+      rawText: rawText.slice(0, MAX_GUIDE_TEXT_CHARS),
     });
   } catch (error) {
     console.error('Guide parse error:', error);

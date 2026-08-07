@@ -1,7 +1,7 @@
 'use client';
 
 import { useAudit } from '@/context/AuditContext';
-import { ProgramSection } from '@/lib/types';
+import { ProgramSection, ALL_SECTIONS_ID } from '@/lib/types';
 import EvidenceChecklist from './EvidenceChecklist';
 import { ClipboardList, FileText, Info } from 'lucide-react';
 import { useState } from 'react';
@@ -26,9 +26,16 @@ export default function ContextPanel() {
     'checklist'
   );
 
-  const currentSection = guide
-    ? findSection(guide.sections, selectedSection)
-    : undefined;
+  const showingAll = selectedSection === ALL_SECTIONS_ID;
+
+  // The checklist renders a list of roots: the whole guide, or the one section
+  const checklistSections: ProgramSection[] = !guide
+    ? []
+    : showingAll
+      ? guide.sections
+      : [findSection(guide.sections, selectedSection)].filter(
+          (s): s is ProgramSection => !!s
+        );
 
   return (
     <div className="w-[350px] bg-white border-l border-gray-100 flex flex-col shrink-0 overflow-hidden">
@@ -68,8 +75,11 @@ export default function ContextPanel() {
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-5 py-3">
         {activeTab === 'checklist' ? (
-          currentSection ? (
-            <EvidenceChecklist section={currentSection} />
+          checklistSections.length > 0 ? (
+            <EvidenceChecklist
+              sections={checklistSections}
+              collapsible={showingAll}
+            />
           ) : (
             <div className="flex flex-col items-center justify-center h-full text-center py-12">
               <Info className="w-8 h-8 text-gray-300 mb-3" />

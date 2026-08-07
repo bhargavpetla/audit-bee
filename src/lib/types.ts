@@ -30,6 +30,12 @@ export interface ChatMessage {
   isStreaming?: boolean;
 }
 
+/**
+ * Sentinel section id meaning "every section in the guide". Used by the section
+ * picker, the context panel and the analysis runner.
+ */
+export const ALL_SECTIONS_ID = '__ALL__';
+
 export interface ParsedGuide {
   title: string;
   rawText?: string;

@@ -65,6 +65,12 @@ function extractSections(text: string): ProgramSection[] {
   // 4-level product items (e.g., 4.1.1.1 Product Name)
   const productItems: { sectionId: string; product: string; isRenewal: boolean }[] = [];
 
+  // "N. Title" is only a heading in guides that don't use decimal IDs at all.
+  // In a decimal guide it is an ordinary numbered list inside a requirement.
+  const usesDecimalIds = lines
+    .slice(tocEndLine)
+    .some((l) => /^\s*\d+\.\d+(\.\d+)?\s+\S/.test(l));
+
   for (let i = tocEndLine; i < lines.length; i++) {
     const trimmed = lines[i].trim();
     if (!trimmed) continue;
@@ -82,6 +88,17 @@ function extractSections(text: string): ProgramSection[] {
         productItems.push({ sectionId: prodId, product: prodName, isRenewal: isR });
       }
       continue;
+    }
+
+    // Product-grid rows where the product ID is not at the start of the line,
+    // e.g. "Storage and database 4.1.2.2 Cloud SQL x". The leading text belongs
+    // to the parent section title and is picked up by the look-ahead.
+    if (!trimmed.match(/^\d/) && trimmed.length < 160) {
+      const embedded = collectInlineProducts(trimmed);
+      if (embedded.length > 0) {
+        productItems.push(...embedded);
+        continue;
+      }
     }
 
     // Top-level: "X.0 Title words"
@@ -104,7 +121,7 @@ function extractSections(text: string): ProgramSection[] {
     const idWithTitle = trimmed.match(/^(\d+\.\d+(?:\.\d+)?)\s+(.+)$/);
     if (idWithTitle) {
       const sectionId = idWithTitle[1];
-      const inlineTitle = idWithTitle[2].trim();
+      let inlineTitle = idWithTitle[2].trim();
 
       // Skip 4-level IDs (handled above)
       if (sectionId.split('.').length > 3) continue;
@@ -114,6 +131,21 @@ function extractSections(text: string): ProgramSection[] {
       if (isTableHeader(trimmed)) continue;
       // Skip lines that are clearly continuation text (very long with sentence patterns)
       if (inlineTitle.length > 120 && inlineTitle.match(/\.\s/)) continue;
+
+      // Product-grid rows put the first product on the same line as its parent
+      // ID, e.g. "4.1.2  4.1.2.1 Cloud Storage x". Harvest the product and take
+      // the real title from the following lines.
+      const trailingProducts = collectInlineProducts(inlineTitle);
+      if (trailingProducts.length > 0) {
+        productItems.push(...trailingProducts);
+        inlineTitle = stripInlineProducts(inlineTitle);
+      }
+
+      if (!inlineTitle) {
+        const titleText = stripInlineProducts(lookAheadForTitle(lines, i));
+        if (!titleText) continue;
+        inlineTitle = titleText;
+      }
 
       rawSections.push({
         id: sectionId,
@@ -130,7 +162,7 @@ function extractSections(text: string): ProgramSection[] {
       const sectionId = idOnly[1];
       if (sectionId.split('.').length > 3) continue;
 
-      const titleText = lookAheadForTitle(lines, i);
+      const titleText = stripInlineProducts(lookAheadForTitle(lines, i));
       if (titleText) {
         rawSections.push({
           id: sectionId,
@@ -143,6 +175,7 @@ function extractSections(text: string): ProgramSection[] {
     }
 
     // Also detect "Section X:" or "X. Title" style (common in non-numbered guides)
+    if (usesDecimalIds) continue;
     const altSection = trimmed.match(/^(?:Section\s+)?(\d+)\.\s+(.{3,80})$/);
     if (altSection && !rawSections.some(s => s.id === altSection[1] + '.0')) {
       const possibleTitle = altSection[2].trim();
@@ -171,10 +204,21 @@ function extractSections(text: string): ProgramSection[] {
 
   // Extract evidence and descriptions
   const processed: Map<string, ProgramSection> = new Map();
+  // Sections whose only "evidence" is their own intro prose, not a real
+  // requirement list — pruned below if their sub-controls carry the real items
+  const descriptionOnly = new Set<string>();
 
   for (const raw of rawSections) {
-    const evidenceItems = extractEvidenceItems(raw.id, raw.content);
+    const extracted = extractEvidenceItems(raw.id, raw.content);
+    const evidenceItems = extracted.items;
+    if (extracted.fromDescription) descriptionOnly.add(raw.id);
     const description = extractDescription(raw.content, raw.title);
+
+    // The same ID can appear more than once — appendix cross-references such as
+    // "1.0 through 7.0 of this document" are indistinguishable from a heading by
+    // pattern alone. The real heading always comes first, so later repeats are
+    // dropped rather than merged (merging drags appendix prose in as evidence).
+    if (processed.has(raw.id)) continue;
 
     processed.set(raw.id, {
       id: raw.id,
@@ -185,10 +229,47 @@ function extractSections(text: string): ProgramSection[] {
   }
 
   // Handle product knowledge items (4-level IDs)
-  addProductItems(processed, productItems);
+  addProductItems(processed, productItems, lines);
 
   // Build hierarchy
-  return buildHierarchy(processed);
+  const topLevel = buildHierarchy(processed);
+  pruneDescriptionOnlyEvidence(topLevel, descriptionOnly);
+  return topLevel;
+}
+
+/**
+ * A parent control whose sub-controls hold the real "Evidence Required" table
+ * should not also carry a pseudo-item made from its own intro paragraph. Those
+ * duplicates read as separate requirements the auditor has to satisfy, and the
+ * model routinely skips them because the same content is already covered by the
+ * child. The text is kept as the section's description instead.
+ */
+function pruneDescriptionOnlyEvidence(
+  sections: ProgramSection[],
+  descriptionOnly: Set<string>
+): void {
+  const subtreeHasEvidence = (section: ProgramSection): boolean =>
+    (section.children || []).some(
+      (c) => c.evidenceItems.length > 0 || subtreeHasEvidence(c)
+    );
+
+  const walk = (list: ProgramSection[]) => {
+    for (const section of list) {
+      if (
+        descriptionOnly.has(section.id) &&
+        section.evidenceItems.length > 0 &&
+        subtreeHasEvidence(section)
+      ) {
+        if (!section.description) {
+          section.description = section.evidenceItems[0].text;
+        }
+        section.evidenceItems = [];
+      }
+      if (section.children) walk(section.children);
+    }
+  };
+
+  walk(sections);
 }
 
 /**
@@ -196,21 +277,43 @@ function extractSections(text: string): ProgramSection[] {
  * TOC lines typically have title text followed by dots/spaces and a page number.
  */
 function findTocEnd(lines: string[]): number {
-  let tocLineCount = 0;
-  let lastTocLine = 0;
+  // A TOC entry is a short line ending in a page number. The separator varies
+  // by extractor — dot leaders, a run of spaces, or (when the PDF's tab stops
+  // collapse) a single space.
+  const isTocEntry = (t: string): boolean =>
+    !!t &&
+    t.length < 110 &&
+    (/\.{3,}\s*\d{1,3}\s*$/.test(t) ||
+      /\s{2,}\d{1,3}\s*$/.test(t) ||
+      /^\S.*[A-Za-z)\]]\s\d{1,3}\s*$/.test(t));
 
-  for (let i = 0; i < Math.min(lines.length, 200); i++) {
+  // Find the longest run of TOC entries, tolerating blank lines between them.
+  // Any other prose line ends the run — that is where the body starts.
+  let bestEnd = -1;
+  let bestCount = 0;
+  let count = 0;
+  let blankGap = 0;
+
+  for (let i = 0; i < Math.min(lines.length, 400); i++) {
     const t = lines[i].trim();
-    // TOC patterns: "Section Title ..... 12" or "Section Title    12"
-    if (t.match(/\.{3,}\s*\d{1,3}\s*$/) || t.match(/\s{3,}\d{1,3}\s*$/)) {
-      tocLineCount++;
-      lastTocLine = i;
+    if (isTocEntry(t)) {
+      count++;
+      blankGap = 0;
+      if (count > bestCount) {
+        bestCount = count;
+        bestEnd = i;
+      }
+    } else if (t.length < 3) {
+      if (++blankGap > 8) count = 0;
+    } else {
+      count = 0;
+      blankGap = 0;
     }
   }
 
-  // If we found a clear TOC (5+ lines with page numbers), skip past it
-  if (tocLineCount >= 5) {
-    return lastTocLine + 1;
+  // If we found a clear TOC (5+ entries), skip past it
+  if (bestCount >= 5) {
+    return bestEnd + 1;
   }
 
   // Otherwise look for the first real section heading after any intro text
@@ -231,6 +334,8 @@ function findTocEnd(lines: string[]): number {
 function isNoiseLine(line: string): boolean {
   if (line.match(/^page\s+\d+/i)) return true;
   if (line.match(/confidential/i) && line.length < 50) return true;
+  // Running header/footer, e.g. "... Assessment v4.2 (Sep 2025)   GOOGLE CONFIDENTIAL 27"
+  if (line.match(/confidential\s*\d{0,3}\s*$/i)) return true;
   if (line.match(/^\d+\s*$/) && line.length < 5) return true; // standalone page numbers
   if (line.match(/^(copyright|all rights reserved)/i)) return true;
   return false;
@@ -262,18 +367,21 @@ function isTableHeader(line: string): boolean {
  * 3. Look for "must/shall/should" requirement sentences
  * 4. Fall back to treating the description as a single evidence item
  */
-function extractEvidenceItems(sectionId: string, contentLines: string[]): EvidenceItem[] {
+function extractEvidenceItems(
+  sectionId: string,
+  contentLines: string[]
+): { items: EvidenceItem[]; fromDescription: boolean } {
   // Strategy 1: Structured "Evidence Required" block
   const structured = extractStructuredEvidence(sectionId, contentLines);
-  if (structured.length > 0) return structured;
+  if (structured.length > 0) return { items: structured, fromDescription: false };
 
   // Strategy 2: Bullet points and numbered lists
   const bullets = extractBulletEvidence(sectionId, contentLines);
-  if (bullets.length > 0) return bullets;
+  if (bullets.length > 0) return { items: bullets, fromDescription: false };
 
   // Strategy 3: Requirement sentences (must/shall/should/provide/demonstrate)
   const requirements = extractRequirementSentences(sectionId, contentLines);
-  if (requirements.length > 0) return requirements;
+  if (requirements.length > 0) return { items: requirements, fromDescription: false };
 
   // Strategy 4: If the section has meaningful description text, treat it as a single evidence item
   const descText = contentLines
@@ -286,15 +394,18 @@ function extractEvidenceItems(sectionId: string, contentLines: string[]): Eviden
   if (descText.length > 30) {
     // Truncate very long descriptions
     const text = descText.length > 300 ? descText.substring(0, 297) + '...' : descText;
-    return [{
-      id: `${sectionId}-E1`,
-      text,
-      isRenewal: false,
-      status: 'not-checked',
-    }];
+    return {
+      items: [{
+        id: `${sectionId}-E1`,
+        text,
+        isRenewal: false,
+        status: 'not-checked',
+      }],
+      fromDescription: true,
+    };
   }
 
-  return [];
+  return { items: [], fromDescription: false };
 }
 
 /**
@@ -456,13 +567,17 @@ function startsNewEvidence(line: string): boolean {
 
 function addProductItems(
   processed: Map<string, ProgramSection>,
-  productItems: { sectionId: string; product: string; isRenewal: boolean }[]
+  productItems: { sectionId: string; product: string; isRenewal: boolean }[],
+  lines: string[]
 ): void {
   if (productItems.length === 0) return;
 
-  // Group by 3-level parent
+  // Group by 3-level parent, dropping duplicates of the same product ID
   const productsByParent = new Map<string, typeof productItems>();
+  const seenProductIds = new Set<string>();
   for (const p of productItems) {
+    if (seenProductIds.has(p.sectionId)) continue;
+    seenProductIds.add(p.sectionId);
     const parts = p.sectionId.split('.');
     const parentId = parts.slice(0, 3).join('.');
     if (!productsByParent.has(parentId)) productsByParent.set(parentId, []);
@@ -475,7 +590,13 @@ function addProductItems(
       parentSection = { id: parentId, title: '', description: '', evidenceItems: [] };
       processed.set(parentId, parentSection);
     }
+    if (!parentSection.title) {
+      parentSection.title =
+        findProductParentTitle(lines, parentId) || `Section ${parentId}`;
+    }
+    products.sort((a, b) => compareSectionIds(a.sectionId, b.sectionId));
     for (const prod of products) {
+      if (parentSection.evidenceItems.some(e => e.id === prod.sectionId)) continue;
       parentSection.evidenceItems.push({
         id: prod.sectionId,
         text: `Demonstrate technical proficiency in ${prod.product}`,
@@ -491,15 +612,113 @@ function addProductItems(
     twoLevelParents.add(parentId.split('.').slice(0, 2).join('.'));
   }
   for (const twoLevel of twoLevelParents) {
-    if (!processed.has(twoLevel)) {
-      processed.set(twoLevel, {
-        id: twoLevel,
-        title: `Section ${twoLevel}`,
-        description: '',
-        evidenceItems: [],
+    const existing = processed.get(twoLevel);
+    if (existing && existing.title) continue;
+    const section = existing || {
+      id: twoLevel,
+      title: '',
+      description: '',
+      evidenceItems: [],
+    };
+    section.title = findGroupHeading(lines, twoLevel) || `Section ${twoLevel}`;
+    processed.set(twoLevel, section);
+  }
+}
+
+/**
+ * Product grids are introduced by a heading such as
+ * "Section 4.1.x - Cloud products in current MSP growth cycle" rather than a
+ * plain "4.1 Title" line, so the group has no title of its own without this.
+ */
+function findGroupHeading(lines: string[], groupId: string): string {
+  const pattern = new RegExp(
+    `^Section\\s+${groupId.replace('.', '\\.')}\\.x\\s*[-–—:]?\\s*(.+)$`,
+    'i'
+  );
+  for (const line of lines) {
+    const match = line.trim().match(pattern);
+    if (match) {
+      const title = cleanTitle(match[1]);
+      if (title.length > 3) return title;
+    }
+  }
+  return '';
+}
+
+/**
+ * A product-grid row carries its group title in a separate cell, so the title
+ * lands on its own line(s) somewhere after the group ID — often after a page
+ * break. Walk forward past the product rows and collect the first run of plain
+ * text.
+ */
+function findProductParentTitle(lines: string[], parentId: string): string {
+  const anchor = new RegExp(`^${parentId.replace(/\./g, '\\.')}(\\s|$)`);
+  let start = -1;
+  for (let i = 0; i < lines.length; i++) {
+    if (anchor.test(lines[i].trim())) {
+      start = i;
+      break;
+    }
+  }
+  if (start === -1) return '';
+
+  const parts: string[] = [];
+  for (let j = start + 1; j < Math.min(start + 16, lines.length); j++) {
+    const t = lines[j].trim();
+    if (!t || isNoiseLine(t)) continue;
+
+    // A product row that starts with its ID contributes no title text
+    if (t.match(/^\d+\.\d/)) {
+      if (parts.length > 0) break;
+      continue;
+    }
+
+    const leading = stripInlineProducts(t);
+    if (leading) parts.push(leading);
+    // Text followed by a product ID is the last title fragment in the cell
+    if (leading !== cleanTitle(t)) break;
+    if (parts.join(' ').length > 80 || parts.length >= 4) break;
+  }
+
+  return cleanTitle(parts.join(' '));
+}
+
+const PRODUCT_IN_LINE = /(\d+\.\d+\.\d+\.\d+)\s+([^\d].*?)(?=\s+\d+\.\d+\.\d+\.\d+\s|$)/g;
+
+/**
+ * Pull "4.1.2.1 Cloud Storage x" style product entries out of a line that also
+ * contains other text (a parent ID, a group title, or several products).
+ */
+function collectInlineProducts(
+  text: string
+): { sectionId: string; product: string; isRenewal: boolean }[] {
+  const found: { sectionId: string; product: string; isRenewal: boolean }[] = [];
+  for (const match of text.matchAll(PRODUCT_IN_LINE)) {
+    const renewalMatch = match[2].match(/^(.*?)(\s+x)\s*$/i);
+    const product = cleanTitle(renewalMatch ? renewalMatch[1] : match[2]);
+    if (product.length > 3) {
+      found.push({
+        sectionId: match[1],
+        product,
+        isRenewal: !!renewalMatch,
       });
     }
   }
+  return found;
+}
+
+/** Remove any embedded product entries, leaving only the surrounding title text. */
+function stripInlineProducts(text: string): string {
+  return cleanTitle(text.replace(/\d+\.\d+\.\d+\.\d+\s+.*$/, ''));
+}
+
+function compareSectionIds(a: string, b: string): number {
+  const pa = a.split('.').map(Number);
+  const pb = b.split('.').map(Number);
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    if ((pa[i] || 0) !== (pb[i] || 0)) return (pa[i] || 0) - (pb[i] || 0);
+  }
+  return 0;
 }
 
 function buildHierarchy(processed: Map<string, ProgramSection>): ProgramSection[] {
@@ -614,7 +833,10 @@ function extractSectionsFallback(lines: string[]): ProgramSection[] {
         j++;
       }
 
-      const evidenceItems = extractEvidenceItems(id, [t, ...contentLines]);
+      const { items: evidenceItems } = extractEvidenceItems(id, [
+        t,
+        ...contentLines,
+      ]);
       const description = contentLines
         .map(l => l.trim())
         .filter(l => l && !isNoiseLine(l))

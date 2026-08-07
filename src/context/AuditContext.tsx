@@ -40,9 +40,13 @@ interface AuditContextType {
   removeDocument: (id: string) => void;
   addMessage: (msg: ChatMessage) => void;
   updateLastAssistantMessage: (content: string) => void;
+  updateMessageById: (id: string, content: string) => void;
   setIsStreaming: (streaming: boolean) => void;
   setGuideLoading: (loading: boolean) => void;
-  updateChecklistItems: (updates: ChecklistUpdate[]) => void;
+  updateChecklistItems: (
+    updates: ChecklistUpdate[],
+    scopeSectionId?: string
+  ) => void;
   resetAudit: () => void;
 }
 
@@ -50,6 +54,20 @@ const AuditContext = createContext<AuditContextType | null>(null);
 
 function deepCloneSections(sections: ProgramSection[]): ProgramSection[] {
   return JSON.parse(JSON.stringify(sections));
+}
+
+function findSectionById(
+  sections: ProgramSection[],
+  id: string
+): ProgramSection | undefined {
+  for (const section of sections) {
+    if (section.id === id) return section;
+    if (section.children) {
+      const found = findSectionById(section.children, id);
+      if (found) return found;
+    }
+  }
+  return undefined;
 }
 
 export function AuditProvider({ children }: { children: ReactNode }) {
@@ -96,7 +114,14 @@ export function AuditProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const updateChecklistItems = useCallback((updates: ChecklistUpdate[]) => {
+  const updateMessageById = useCallback((id: string, content: string) => {
+    setMessages((prev) =>
+      prev.map((m) => (m.id === id ? { ...m, content } : m))
+    );
+  }, []);
+
+  const updateChecklistItems = useCallback(
+    (updates: ChecklistUpdate[], scopeSectionId?: string) => {
     setGuideState((prev) => {
       if (!prev) return prev;
       const newSections = deepCloneSections(prev.sections);
@@ -134,9 +159,12 @@ export function AuditProvider({ children }: { children: ReactNode }) {
 
       updateInSections(newSections);
 
-      // If no items matched by ID, try matching by index within the selected section
-      if (!anyUpdated && updates.length > 0) {
-        const allItems: { status: string; notes?: string }[] = [];
+      // If no items matched by ID, fall back to matching by order — but only
+      // inside the section that was analysed, so a batch run covering one
+      // section can never overwrite statuses belonging to another.
+      if (!anyUpdated && updates.length > 0 && scopeSectionId) {
+        const scope = findSectionById(newSections, scopeSectionId);
+        const allItems: EvidenceItem[] = [];
         const collectItems = (sections: ProgramSection[]) => {
           for (const section of sections) {
             for (const item of section.evidenceItems) {
@@ -145,20 +173,22 @@ export function AuditProvider({ children }: { children: ReactNode }) {
             if (section.children) collectItems(section.children);
           }
         };
-        collectItems(newSections);
+        collectItems(scope ? [scope] : newSections);
 
         // Apply updates by order if count roughly matches
         if (updates.length <= allItems.length) {
           for (let i = 0; i < updates.length && i < allItems.length; i++) {
             allItems[i].status = updates[i].status;
-            if (updates[i].notes) (allItems[i] as EvidenceItem).aiNotes = updates[i].notes;
+            if (updates[i].notes) allItems[i].aiNotes = updates[i].notes;
           }
         }
       }
 
       return { ...prev, sections: newSections };
     });
-  }, []);
+    },
+    []
+  );
 
   const resetAudit = useCallback(() => {
     setGuideState(null);
@@ -185,6 +215,7 @@ export function AuditProvider({ children }: { children: ReactNode }) {
         removeDocument,
         addMessage,
         updateLastAssistantMessage,
+        updateMessageById,
         setIsStreaming,
         setGuideLoading,
         updateChecklistItems,
