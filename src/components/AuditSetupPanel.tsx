@@ -3,6 +3,7 @@
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useAudit } from '@/context/AuditContext';
+import { ALL_SECTIONS_ID, ChatMessage, ProgramSection } from '@/lib/types';
 import DocumentUploader from './DocumentUploader';
 import {
   Search,
@@ -31,13 +32,18 @@ export default function AuditSetupPanel() {
     messages,
     addMessage,
     setIsStreaming,
-    updateLastAssistantMessage,
+    updateMessageById,
     updateChecklistItems,
     resetAudit,
   } = useAudit();
 
   const [guideError, setGuideError] = useState('');
   const [parseStep, setParseStep] = useState('');
+  const [progress, setProgress] = useState<{
+    done: number;
+    total: number;
+    label: string;
+  } | null>(null);
 
   // Upload and parse program guide
   const onGuideDrop = useCallback(
@@ -116,52 +122,158 @@ export default function AuditSetupPanel() {
 
   const sectionOptions = getSectionOptions();
 
-  // Count total evidence for a section
-  const countSectionEvidence = (sectionId: string): number => {
-    if (!guide) return 0;
-    const findAndCount = (sections: typeof guide.sections): number => {
-      for (const s of sections) {
-        if (s.id === sectionId) {
-          let count = s.evidenceItems.length;
-          const countChildren = (children: typeof guide.sections) => {
-            for (const c of children) {
-              count += c.evidenceItems.length;
-              if (c.children) countChildren(c.children);
-            }
-          };
-          if (s.children) countChildren(s.children);
-          return count;
-        }
-        if (s.children) {
-          const found = findAndCount(s.children);
-          if (found > 0) return found;
-        }
+  const findSection = (
+    sections: ProgramSection[],
+    id: string
+  ): ProgramSection | undefined => {
+    for (const s of sections) {
+      if (s.id === id) return s;
+      if (s.children) {
+        const found = findSection(s.children, id);
+        if (found) return found;
       }
-      return 0;
-    };
-    return findAndCount(guide.sections);
+    }
+    return undefined;
   };
 
-  const handleAnalyse = async () => {
-    if (!selectedSection || documents.length === 0 || isStreaming || !guide)
-      return;
+  const countEvidence = (sections: ProgramSection[]): number =>
+    sections.reduce(
+      (sum, s) =>
+        sum + s.evidenceItems.length + countEvidence(s.children || []),
+      0
+    );
 
-    const sectionLabel =
-      sectionOptions.find((s) => s.id === selectedSection)?.label ||
-      selectedSection;
+  const countControls = (sections: ProgramSection[]): number =>
+    sections.reduce((sum, s) => sum + 1 + countControls(s.children || []), 0);
 
-    const userMsg = `Please analyse my uploaded documents against the requirements for ${sectionLabel} and tell me what evidence is missing and how I can improve my submission.`;
+  // Count total evidence for a section (or the whole guide)
+  const countSectionEvidence = (sectionId: string): number => {
+    if (!guide) return 0;
+    if (sectionId === ALL_SECTIONS_ID) return countEvidence(guide.sections);
+    const section = findSection(guide.sections, sectionId);
+    return section ? countEvidence([section]) : 0;
+  };
 
-    const userMessage = {
-      id: `msg-${Date.now()}`,
-      role: 'user' as const,
-      content: userMsg,
+  const totalEvidence = guide ? countEvidence(guide.sections) : 0;
+  const totalControls = guide ? countControls(guide.sections) : 0;
+
+  const normalizeId = (id: string) => id.replace(/[-\s]/g, '').toLowerCase();
+
+  const collectEvidenceIds = (sections: ProgramSection[]): string[] => {
+    const ids: string[] = [];
+    const walk = (list: ProgramSection[]) => {
+      for (const s of list) {
+        ids.push(...s.evidenceItems.map((i) => i.id));
+        if (s.children) walk(s.children);
+      }
+    };
+    walk(sections);
+    return ids;
+  };
+
+  const stripChecklist = (text: string) =>
+    text.replace(/<!--CHECKLIST_UPDATE:[\s\S]*?-->/g, '').trim();
+
+  /**
+   * One request/response round trip, streamed into an existing assistant
+   * message. `prefix` is text already shown in that message, so a follow-up
+   * pass appends rather than replaces.
+   */
+  const streamPass = async (
+    sectionId: string,
+    userMessage: ChatMessage,
+    history: ChatMessage[],
+    targetMessageId: string,
+    prefix = ''
+  ): Promise<{ text: string; items: { id: string; status: string }[] }> => {
+    if (!guide) return { text: '', items: [] };
+
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [...history, userMessage],
+        documents,
+        sectionId,
+        guideSections: guide.sections,
+        guideTitle: guide.title,
+        guideRawText: guide.rawText,
+      }),
+    });
+
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => ({}));
+      throw new Error(errBody.error || `Request failed (${res.status})`);
+    }
+
+    const reader = res.body?.getReader();
+    if (!reader) throw new Error('No reader');
+
+    const decoder = new TextDecoder();
+    let fullText = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      fullText += decoder.decode(value, { stream: true });
+      updateMessageById(targetMessageId, prefix + fullText);
+    }
+
+    let items: { id: string; status: string }[] = [];
+    const checklistMatch = fullText.match(/<!--CHECKLIST_UPDATE:([\s\S]*?)-->/);
+    if (checklistMatch) {
+      try {
+        const updates = JSON.parse(checklistMatch[1].trim());
+        if (updates.items && updates.items.length > 0) {
+          updateChecklistItems(updates.items, sectionId);
+          items = updates.items;
+        }
+      } catch (e) {
+        console.error(
+          '[Audit Bee] Failed to parse checklist update:',
+          e,
+          checklistMatch[1]
+        );
+      }
+    } else {
+      console.log('[Audit Bee] No CHECKLIST_UPDATE found in response');
+    }
+
+    const clean = stripChecklist(fullText);
+    updateMessageById(targetMessageId, prefix + clean);
+    return { text: clean, items };
+  };
+
+  /**
+   * Run one analysis pass and stream it into its own assistant message, then a
+   * targeted second pass for any evidence item the model skipped. Returns the
+   * checklist updates produced, so a whole-guide run can report its coverage.
+   */
+  const analyseSection = async (
+    sectionId: string,
+    sectionLabel: string,
+    history: ChatMessage[]
+  ): Promise<{ id: string; status: string }[]> => {
+    if (!guide) return [];
+
+    const scope =
+      sectionId === ALL_SECTIONS_ID
+        ? guide.sections
+        : [findSection(guide.sections, sectionId)].filter(
+            (s): s is ProgramSection => !!s
+          );
+    const expectedIds = collectEvidenceIds(scope);
+
+    const userMessage: ChatMessage = {
+      id: `msg-${Date.now()}-u-${sectionId}`,
+      role: 'user',
+      content: `Please analyse my uploaded documents against the requirements for ${sectionLabel} and tell me what evidence is missing and how I can improve my submission.`,
       timestamp: new Date().toISOString(),
     };
 
-    const assistantMessage = {
-      id: `msg-${Date.now() + 1}`,
-      role: 'assistant' as const,
+    const assistantMessage: ChatMessage = {
+      id: `msg-${Date.now()}-a-${sectionId}`,
+      role: 'assistant',
       content: '',
       timestamp: new Date().toISOString(),
       isStreaming: true,
@@ -169,70 +281,185 @@ export default function AuditSetupPanel() {
 
     addMessage(userMessage);
     addMessage(assistantMessage);
-    setIsStreaming(true);
 
     try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: [...messages, userMessage],
-          documents,
-          sectionId: selectedSection,
-          guideSections: guide.sections,
-          guideTitle: guide.title,
-          guideRawText: guide.rawText,
-        }),
-      });
-
-      if (!res.ok) {
-        const errBody = await res.json().catch(() => ({}));
-        throw new Error(errBody.error || `Request failed (${res.status})`);
-      }
-
-      const reader = res.body?.getReader();
-      if (!reader) throw new Error('No reader');
-
-      const decoder = new TextDecoder();
-      let fullText = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        fullText += decoder.decode(value, { stream: true });
-        updateLastAssistantMessage(fullText);
-      }
-
-      // Parse checklist updates
-      const checklistMatch = fullText.match(
-        /<!--CHECKLIST_UPDATE:([\s\S]*?)-->/
+      const first = await streamPass(
+        sectionId,
+        userMessage,
+        history,
+        assistantMessage.id
       );
-      if (checklistMatch) {
-        try {
-          const jsonStr = checklistMatch[1].trim();
-          const updates = JSON.parse(jsonStr);
-          console.log('[Audit Bee] Checklist update parsed:', updates);
-          if (updates.items && updates.items.length > 0) {
-            updateChecklistItems(updates.items);
-          }
-        } catch (e) {
-          console.error('[Audit Bee] Failed to parse checklist update:', e, checklistMatch[1]);
-        }
-      } else {
-        console.log('[Audit Bee] No CHECKLIST_UPDATE found in response');
+      const items = [...first.items];
+
+      // Long sections occasionally lose a few items on the way to the checklist
+      // block. Ask for just those rather than leaving them unassessed.
+      const seen = new Set(items.map((i) => normalizeId(i.id)));
+      const unresolved = expectedIds.filter(
+        (id) => !seen.has(normalizeId(id))
+      );
+
+      if (unresolved.length > 0 && unresolved.length <= 40) {
+        const followUp: ChatMessage = {
+          id: `msg-${Date.now()}-u2-${sectionId}`,
+          role: 'user',
+          content: `These evidence items have no verdict yet: ${unresolved.join(', ')}. Give a ✅/⚠️/❌ bullet for each one under a "### Remaining items" heading, following the same rules, then the checklist block covering exactly these IDs. Nothing else.`,
+          timestamp: new Date().toISOString(),
+        };
+
+        const second = await streamPass(
+          sectionId,
+          followUp,
+          [userMessage, { ...assistantMessage, content: first.text }],
+          assistantMessage.id,
+          first.text + '\n\n'
+        );
+        items.push(...second.items);
       }
 
-      const cleanText = fullText
-        .replace(/<!--CHECKLIST_UPDATE:[\s\S]*?-->/g, '')
-        .trim();
-      updateLastAssistantMessage(cleanText);
+      return items;
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Unknown error';
       console.error('[Audit Bee] Analysis error:', err);
-      updateLastAssistantMessage(
-        `Sorry, an error occurred while analysing your documents: ${msg}. Please try again.`
+      updateMessageById(
+        assistantMessage.id,
+        `Sorry, an error occurred while analysing ${sectionLabel}: ${msg}.`
       );
+      return [];
+    }
+  };
+
+  /**
+   * Whole-guide runs are split one request per top-level section. A single
+   * request covering every control point would have to emit hundreds of
+   * findings and gets truncated long before it finishes.
+   */
+  const analyseWholeGuide = async () => {
+    if (!guide) return;
+
+    const covered = new Map<string, string>();
+
+    for (let i = 0; i < guide.sections.length; i++) {
+      const section = guide.sections[i];
+      setProgress({
+        done: i,
+        total: guide.sections.length,
+        label: `${section.id} ${section.title}`,
+      });
+
+      const applied = await analyseSection(
+        section.id,
+        `Section ${section.id} — ${section.title}`,
+        []
+      );
+      for (const item of applied) covered.set(item.id, item.status);
+    }
+
+    setProgress({
+      done: guide.sections.length,
+      total: guide.sections.length,
+      label: 'Building coverage summary',
+    });
+
+    addMessage(buildCoverageMessage(guide.sections, covered));
+  };
+
+  const buildCoverageMessage = (
+    sections: ProgramSection[],
+    covered: Map<string, string>
+  ): ChatMessage => {
+    // The model reproduces IDs loosely ("1.2-e1", "1.2 - E1"), matched the same
+    // way the checklist merge does
+    const normalize = (id: string) => id.replace(/[-\s]/g, '').toLowerCase();
+    const coveredByKey = new Map<string, string>();
+    for (const [id, status] of covered) coveredByKey.set(normalize(id), status);
+
+    const tallyOf = (roots: ProgramSection[]) => {
+      const t = { provided: 0, partial: 0, missing: 0, unassessed: [] as string[] };
+      const walk = (list: ProgramSection[]) => {
+        for (const s of list) {
+          for (const item of s.evidenceItems) {
+            const status = coveredByKey.get(normalize(item.id));
+            if (status === 'provided') t.provided++;
+            else if (status === 'partial') t.partial++;
+            else if (status === 'missing') t.missing++;
+            else t.unassessed.push(item.id);
+          }
+          if (s.children) walk(s.children);
+        }
+      };
+      walk(roots);
+      return t;
+    };
+
+    const overall = tallyOf(sections);
+    const total =
+      overall.provided +
+      overall.partial +
+      overall.missing +
+      overall.unassessed.length;
+    const assessed = total - overall.unassessed.length;
+    const readiness =
+      overall.missing === 0 && overall.partial === 0
+        ? 'STRONG'
+        : overall.provided >= overall.missing
+          ? 'PARTIAL'
+          : 'INSUFFICIENT';
+
+    const lines = [
+      `## Whole-guide coverage`,
+      ``,
+      `**Readiness: ${readiness}** — ${overall.provided} provided · ${overall.partial} partial · ${overall.missing} missing of ${total} evidence items, across ${sections.length} sections and ${countControls(sections)} control points.`,
+      ``,
+      `| Section | ✅ | ⚠️ | ❌ | Not assessed |`,
+      `| --- | ---: | ---: | ---: | ---: |`,
+    ];
+
+    for (const section of sections) {
+      const t = tallyOf([section]);
+      const title =
+        section.title.length > 38
+          ? section.title.slice(0, 37) + '…'
+          : section.title;
+      lines.push(
+        `| ${section.id} ${title} | ${t.provided} | ${t.partial} | ${t.missing} | ${t.unassessed.length} |`
+      );
+    }
+
+    lines.push(
+      `| **Total** | **${overall.provided}** | **${overall.partial}** | **${overall.missing}** | **${overall.unassessed.length}** |`
+    );
+
+    if (overall.unassessed.length > 0) {
+      lines.push(
+        ``,
+        `${assessed} of ${total} items came back with a verdict. The rest were not returned by the model — re-run those sections on their own, or ask about them directly: ${overall.unassessed.slice(0, 25).join(', ')}${overall.unassessed.length > 25 ? ', …' : ''}`
+      );
+    }
+
+    return {
+      id: `msg-${Date.now()}-coverage`,
+      role: 'assistant',
+      content: lines.join('\n'),
+      timestamp: new Date().toISOString(),
+    };
+  };
+
+  const handleAnalyse = async () => {
+    if (!selectedSection || documents.length === 0 || isStreaming || !guide)
+      return;
+
+    setIsStreaming(true);
+    try {
+      if (selectedSection === ALL_SECTIONS_ID) {
+        await analyseWholeGuide();
+      } else {
+        const sectionLabel =
+          sectionOptions.find((s) => s.id === selectedSection)?.label ||
+          selectedSection;
+        await analyseSection(selectedSection, sectionLabel, messages);
+      }
     } finally {
+      setProgress(null);
       setIsStreaming(false);
     }
   };
@@ -277,7 +504,8 @@ export default function AuditSetupPanel() {
                     {guideFileName}
                   </p>
                   <p className="text-[10px] text-green-600 mt-0.5">
-                    {guide.sections.length} sections &bull; {guide.totalEvidence || '—'} evidence items
+                    {guide.sections.length} top-level &bull; {totalControls}{' '}
+                    control points &bull; {totalEvidence} evidence items
                   </p>
                 </div>
                 <button
@@ -363,6 +591,10 @@ export default function AuditSetupPanel() {
                 title={sectionOptions.find((s) => s.id === selectedSection)?.label || ''}
               >
                 <option value="">Select a section...</option>
+                <option value={ALL_SECTIONS_ID}>
+                  All sections — every control point ({totalControls} controls,{' '}
+                  {totalEvidence} items)
+                </option>
                 {sectionOptions.map((opt) => (
                   <option key={opt.id} value={opt.id} title={opt.label}>
                     {'\u00A0\u00A0'.repeat(opt.depth)}
@@ -374,7 +606,9 @@ export default function AuditSetupPanel() {
             </div>
             {selectedSection && (
               <p className="text-[10px] text-gray-400 px-1">
-                {countSectionEvidence(selectedSection)} evidence items in this section
+                {selectedSection === ALL_SECTIONS_ID
+                  ? `${totalEvidence} evidence items across the whole guide — analysed one section at a time`
+                  : `${countSectionEvidence(selectedSection)} evidence items in this section`}
               </p>
             )}
           </div>
@@ -392,23 +626,45 @@ export default function AuditSetupPanel() {
 
         {/* Analyse Button */}
         {guide && selectedSection && documents.length > 0 && (
-          <button
-            onClick={handleAnalyse}
-            disabled={isStreaming}
-            className="w-full bg-primary hover:bg-primary-hover disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-colors text-sm shadow-lg shadow-primary/25"
-          >
-            {isStreaming ? (
-              <span className="flex items-center justify-center gap-2">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Analysing...
-              </span>
-            ) : (
-              <span className="flex items-center justify-center gap-2">
-                <Search className="w-4 h-4" />
-                Analyse My Documents
-              </span>
+          <div className="space-y-2">
+            <button
+              onClick={handleAnalyse}
+              disabled={isStreaming}
+              className="w-full bg-primary hover:bg-primary-hover disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-colors text-sm shadow-lg shadow-primary/25"
+            >
+              {isStreaming ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  {progress
+                    ? `Analysing ${Math.min(progress.done + 1, progress.total)} of ${progress.total}...`
+                    : 'Analysing...'}
+                </span>
+              ) : (
+                <span className="flex items-center justify-center gap-2">
+                  <Search className="w-4 h-4" />
+                  {selectedSection === ALL_SECTIONS_ID
+                    ? 'Analyse All Control Points'
+                    : 'Analyse My Documents'}
+                </span>
+              )}
+            </button>
+
+            {progress && (
+              <div className="space-y-1">
+                <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-primary rounded-full transition-all"
+                    style={{
+                      width: `${(progress.done / progress.total) * 100}%`,
+                    }}
+                  />
+                </div>
+                <p className="text-[10px] text-gray-400 truncate">
+                  {progress.label}
+                </p>
+              </div>
             )}
-          </button>
+          </div>
         )}
       </div>
     </div>

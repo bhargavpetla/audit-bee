@@ -37,13 +37,21 @@ export default function ChatMessage({ message }: Props) {
         <BeeLogo size={22} />
       </div>
       <div
-        className={`max-w-[85%] bg-white border border-gray-100 rounded-2xl rounded-bl-md px-4 py-3 text-sm text-gray-700 shadow-sm ${
-          message.isStreaming && !displayContent ? '' : ''
-        }`}
+        className="max-w-[92%] min-w-0 bg-white border border-gray-100 rounded-2xl rounded-bl-md px-4 py-3 text-sm text-gray-700 shadow-sm"
       >
         {displayContent ? (
           <div className="chat-markdown">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                // Wide tables scroll inside the bubble instead of stretching it
+                table: ({ children }) => (
+                  <div className="table-scroll">
+                    <table>{children}</table>
+                  </div>
+                ),
+              }}
+            >
               {displayContent}
             </ReactMarkdown>
           </div>

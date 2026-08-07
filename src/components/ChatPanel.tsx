@@ -63,6 +63,7 @@ export default function ChatPanel() {
           sectionId: selectedSection,
           guideSections: guide.sections,
           guideTitle: guide.title,
+          guideRawText: guide.rawText,
         }),
       });
 
@@ -91,7 +92,7 @@ export default function ChatPanel() {
           const updates = JSON.parse(jsonStr);
           console.log('[Audit Bee] Chat checklist update parsed:', updates);
           if (updates.items && updates.items.length > 0) {
-            updateChecklistItems(updates.items);
+            updateChecklistItems(updates.items, selectedSection);
           }
         } catch (e) {
           console.error('[Audit Bee] Failed to parse chat checklist update:', e, checklistMatch[1]);
