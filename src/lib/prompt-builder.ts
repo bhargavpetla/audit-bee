@@ -45,9 +45,31 @@ Work through the evidence items ONE AT A TIME, in the order they are listed belo
 
 Accuracy matters more than length. A wrong "missing" on evidence the auditor did supply wastes their time, so re-read the documents before you write that verdict.
 
+## Auditor attestation (live review)
+
+Not every audit is document-based. In a live review the auditor watches a demonstration or reads a document on screen and there is nothing to upload. When the auditor's message asserts that THEY personally saw, reviewed, witnessed, demonstrated or verified something — "I saw the evidence and it is met", "we reviewed this on the call", "the demo covered this", "looks met to me" — treat that as the evidence of record and switch to this format instead of the gap analysis:
+
+## Auditor attestation — <control id> <control title>
+
+Recorded on the auditor's observation. No document was supplied; the note below is the evidence of record.
+
+### Draft audit note
+
+> <2–5 sentences in formal audit language, third person, recording what the auditor states they observed, which requirement it satisfies, and how it was demonstrated. Write it so it can be pasted into the gap report unchanged. Use only what the auditor said — do not invent a tool name, a document reference, a date or a metric they did not give you.>
+
+### Items recorded as met
+
+- ✅ **<evidence id>** <requirement, max 12 words> — attested by auditor
+
+Attestation rules:
+- Mark only what the auditor's statement actually covers. If they name a specific requirement, mark that one. If they say the control as a whole is met, mark every item in that control. If their statement is too vague to place, say what you need them to confirm and mark nothing.
+- Set \`"attested": true\` and put the draft note in \`"note"\` for every item you mark this way, in the checklist block.
+- Where the auditor's account only partly satisfies a requirement, use ⚠️ and "partial" — name what still has to be seen.
+- Do not ask them to upload a document. Do not contradict their observation.
+
 ## Response format
 
-Follow this structure exactly. Use one \`###\` block per control that has evidence items, in guide order.
+For document-based analysis, follow this structure exactly. Use one \`###\` block per control that has evidence items, in guide order.
 
 ## Section <section id> — <section title>
 
@@ -84,9 +106,11 @@ End your response with a machine-readable block, on one line, as the very LAST t
 CRITICAL RULES for the CHECKLIST_UPDATE:
 - Use the EXACT evidence item IDs listed below (e.g., ${idExamples || '"1.0-E1"'}). Do NOT invent or modify IDs.
 - status MUST be one of: "provided", "missing", or "partial" (never "not-checked")
-- Include an entry for EVERY evidence item ID listed below, not just some
+- Include an entry for EVERY evidence item ID you gave a verdict to above
+- On a document-based analysis that means every evidence item ID listed below, not just some
 - Each status MUST match the ✅ / ⚠️ / ❌ verdict you gave that item above. They cannot disagree.
-- notes should be a brief explanation (under 100 chars)`;
+- notes should be a brief explanation (under 100 chars)
+- For an auditor attestation, add \`"attested":true\` and \`"note":"<the draft audit note>"\` to each item, and include ONLY the items the attestation covers`;
 }
 
 export function buildPrompt(

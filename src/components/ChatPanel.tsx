@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Send } from 'lucide-react';
+import { Send, Square } from 'lucide-react';
 import { useAudit } from '@/context/AuditContext';
 import ChatMessage from './ChatMessage';
 import BeeLogo from './BeeLogo';
@@ -15,8 +15,12 @@ export default function ChatPanel() {
     documents,
     addMessage,
     updateLastAssistantMessage,
-    setIsStreaming,
     updateChecklistItems,
+    startRun,
+    endRun,
+    registerAbort,
+    stopRun,
+    isCancelled,
   } = useAudit();
 
   const [input, setInput] = useState('');
@@ -49,7 +53,10 @@ export default function ChatPanel() {
 
     addMessage(userMessage);
     addMessage(assistantMessage);
-    setIsStreaming(true);
+    startRun();
+
+    const controller = new AbortController();
+    registerAbort(controller);
 
     try {
       const allMessages = [...messages, userMessage];
@@ -57,6 +64,7 @@ export default function ChatPanel() {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
         body: JSON.stringify({
           messages: allMessages,
           documents,
@@ -75,11 +83,17 @@ export default function ChatPanel() {
       const decoder = new TextDecoder();
       let fullText = '';
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        fullText += decoder.decode(value, { stream: true });
-        updateLastAssistantMessage(fullText);
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          fullText += decoder.decode(value, { stream: true });
+          updateLastAssistantMessage(fullText);
+        }
+      } catch (err) {
+        // Stopping mid-stream is not a failure — keep what arrived
+        if ((err as Error)?.name !== 'AbortError') throw err;
+        fullText += '\n\n_Stopped by the auditor._';
       }
 
       // Parse checklist updates
@@ -105,12 +119,14 @@ export default function ChatPanel() {
         .replace(/<!--CHECKLIST_UPDATE:[\s\S]*?-->/g, '')
         .trim();
       updateLastAssistantMessage(cleanText);
-    } catch {
+    } catch (err) {
       updateLastAssistantMessage(
-        'Sorry, an error occurred. Please try again.'
+        isCancelled() || (err as Error)?.name === 'AbortError'
+          ? '_Stopped by the auditor._'
+          : 'Sorry, an error occurred. Please try again.'
       );
     } finally {
-      setIsStreaming(false);
+      endRun();
     }
   };
 
@@ -170,22 +186,30 @@ export default function ChatPanel() {
                 ? 'Upload a program guide to start...'
                 : !selectedSection
                   ? 'Select a section first...'
-                  : 'Ask about this section or type a question...'
+                  : 'Ask a question, or record a live-review observation ("I saw the evidence, this is met")...'
             }
             disabled={!selectedSection || isStreaming || !guide}
             rows={1}
             className="flex-1 bg-transparent resize-none text-sm text-gray-700 placeholder-gray-400 focus:outline-none disabled:opacity-50 max-h-32"
             style={{ minHeight: '24px' }}
           />
-          <button
-            onClick={sendMessage}
-            disabled={
-              !input.trim() || !selectedSection || isStreaming || !guide
-            }
-            className="w-9 h-9 rounded-xl bg-primary hover:bg-primary-hover disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center transition-colors shrink-0"
-          >
-            <Send className="w-4 h-4 text-white" />
-          </button>
+          {isStreaming ? (
+            <button
+              onClick={stopRun}
+              title="Stop"
+              className="w-9 h-9 rounded-xl bg-red-500 hover:bg-red-600 flex items-center justify-center transition-colors shrink-0"
+            >
+              <Square className="w-3.5 h-3.5 text-white fill-current" />
+            </button>
+          ) : (
+            <button
+              onClick={sendMessage}
+              disabled={!input.trim() || !selectedSection || !guide}
+              className="w-9 h-9 rounded-xl bg-primary hover:bg-primary-hover disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center justify-center transition-colors shrink-0"
+            >
+              <Send className="w-4 h-4 text-white" />
+            </button>
+          )}
         </div>
       </div>
     </div>

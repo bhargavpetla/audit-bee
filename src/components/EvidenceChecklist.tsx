@@ -188,10 +188,23 @@ function EvidenceRow({ item }: { item: EvidenceItem }) {
             </span>
           )}
           <StatusBadge status={item.status} />
+          {item.attested && (
+            <span
+              className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 whitespace-nowrap"
+              title="Accepted on the auditor's observation in a live review"
+            >
+              Attested
+            </span>
+          )}
         </div>
         <p className="text-[11px] text-gray-600 leading-relaxed">{item.text}</p>
         {item.aiNotes && (
           <p className="text-[10px] text-gray-400 mt-1 italic">{item.aiNotes}</p>
+        )}
+        {item.auditorNote && (
+          <p className="text-[10px] text-blue-700 mt-1 border-l-2 border-blue-200 pl-2 leading-relaxed">
+            {item.auditorNote}
+          </p>
         )}
       </div>
     </div>
