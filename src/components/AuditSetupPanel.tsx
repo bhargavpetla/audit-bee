@@ -15,6 +15,7 @@ import {
   RotateCcw,
   X,
   FileText,
+  Square,
 } from 'lucide-react';
 import BeeLogo from './BeeLogo';
 
@@ -31,10 +32,14 @@ export default function AuditSetupPanel() {
     isStreaming,
     messages,
     addMessage,
-    setIsStreaming,
     updateMessageById,
     updateChecklistItems,
     resetAudit,
+    startRun,
+    endRun,
+    registerAbort,
+    stopRun,
+    isCancelled,
   } = useAudit();
 
   const [guideError, setGuideError] = useState('');
@@ -44,6 +49,7 @@ export default function AuditSetupPanel() {
     total: number;
     label: string;
   } | null>(null);
+  const [stopping, setStopping] = useState(false);
 
   // Upload and parse program guide
   const onGuideDrop = useCallback(
@@ -185,12 +191,20 @@ export default function AuditSetupPanel() {
     history: ChatMessage[],
     targetMessageId: string,
     prefix = ''
-  ): Promise<{ text: string; items: { id: string; status: string }[] }> => {
-    if (!guide) return { text: '', items: [] };
+  ): Promise<{
+    text: string;
+    items: { id: string; status: string }[];
+    aborted: boolean;
+  }> => {
+    if (!guide) return { text: '', items: [], aborted: false };
+
+    const controller = new AbortController();
+    registerAbort(controller);
 
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      signal: controller.signal,
       body: JSON.stringify({
         messages: [...history, userMessage],
         documents,
@@ -211,12 +225,19 @@ export default function AuditSetupPanel() {
 
     const decoder = new TextDecoder();
     let fullText = '';
+    let aborted = false;
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      fullText += decoder.decode(value, { stream: true });
-      updateMessageById(targetMessageId, prefix + fullText);
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        fullText += decoder.decode(value, { stream: true });
+        updateMessageById(targetMessageId, prefix + fullText);
+      }
+    } catch (err) {
+      // Stopping mid-stream is not a failure — keep what arrived
+      if ((err as Error)?.name !== 'AbortError') throw err;
+      aborted = true;
     }
 
     let items: { id: string; status: string }[] = [];
@@ -240,8 +261,9 @@ export default function AuditSetupPanel() {
     }
 
     const clean = stripChecklist(fullText);
-    updateMessageById(targetMessageId, prefix + clean);
-    return { text: clean, items };
+    const suffix = aborted ? '\n\n_Stopped by the auditor._' : '';
+    updateMessageById(targetMessageId, prefix + clean + suffix);
+    return { text: clean + suffix, items, aborted };
   };
 
   /**
@@ -290,6 +312,7 @@ export default function AuditSetupPanel() {
         assistantMessage.id
       );
       const items = [...first.items];
+      if (first.aborted) return items;
 
       // Long sections occasionally lose a few items on the way to the checklist
       // block. Ask for just those rather than leaving them unassessed.
@@ -318,6 +341,14 @@ export default function AuditSetupPanel() {
 
       return items;
     } catch (err) {
+      if (isCancelled() || (err as Error)?.name === 'AbortError') {
+        // Keep whatever streamed in before the stop, and say so
+        updateMessageById(
+          assistantMessage.id,
+          `_Analysis of ${sectionLabel} was stopped by the auditor. Any verdicts above have been kept._`
+        );
+        return [];
+      }
       const msg = err instanceof Error ? err.message : 'Unknown error';
       console.error('[Audit Bee] Analysis error:', err);
       updateMessageById(
@@ -338,7 +369,11 @@ export default function AuditSetupPanel() {
 
     const covered = new Map<string, string>();
 
+    const analysed: ProgramSection[] = [];
+
     for (let i = 0; i < guide.sections.length; i++) {
+      if (isCancelled()) break;
+
       const section = guide.sections[i];
       setProgress({
         done: i,
@@ -351,21 +386,27 @@ export default function AuditSetupPanel() {
         `Section ${section.id} — ${section.title}`,
         []
       );
+      analysed.push(section);
       for (const item of applied) covered.set(item.id, item.status);
     }
 
+    if (analysed.length === 0) return;
+
     setProgress({
-      done: guide.sections.length,
+      done: analysed.length,
       total: guide.sections.length,
       label: 'Building coverage summary',
     });
 
-    addMessage(buildCoverageMessage(guide.sections, covered));
+    // Summarise only what actually ran, so a stopped run doesn't report the
+    // sections it never reached as gaps
+    addMessage(buildCoverageMessage(analysed, covered, isCancelled()));
   };
 
   const buildCoverageMessage = (
     sections: ProgramSection[],
-    covered: Map<string, string>
+    covered: Map<string, string>,
+    stopped = false
   ): ChatMessage => {
     // The model reproduces IDs loosely ("1.2-e1", "1.2 - E1"), matched the same
     // way the checklist merge does
@@ -406,9 +447,9 @@ export default function AuditSetupPanel() {
           : 'INSUFFICIENT';
 
     const lines = [
-      `## Whole-guide coverage`,
+      stopped ? `## Coverage so far (run stopped)` : `## Whole-guide coverage`,
       ``,
-      `**Readiness: ${readiness}** — ${overall.provided} provided · ${overall.partial} partial · ${overall.missing} missing of ${total} evidence items, across ${sections.length} sections and ${countControls(sections)} control points.`,
+      `**Readiness: ${readiness}** — ${overall.provided} provided · ${overall.partial} partial · ${overall.missing} missing of ${total} evidence items, across ${sections.length} section${sections.length === 1 ? '' : 's'} and ${countControls(sections)} control points.`,
       ``,
       `| Section | ✅ | ⚠️ | ❌ | Not assessed |`,
       `| --- | ---: | ---: | ---: | ---: |`,
@@ -448,7 +489,8 @@ export default function AuditSetupPanel() {
     if (!selectedSection || documents.length === 0 || isStreaming || !guide)
       return;
 
-    setIsStreaming(true);
+    setStopping(false);
+    startRun();
     try {
       if (selectedSection === ALL_SECTIONS_ID) {
         await analyseWholeGuide();
@@ -460,8 +502,14 @@ export default function AuditSetupPanel() {
       }
     } finally {
       setProgress(null);
-      setIsStreaming(false);
+      setStopping(false);
+      endRun();
     }
+  };
+
+  const handleStop = () => {
+    setStopping(true);
+    stopRun();
   };
 
   return (
@@ -627,27 +675,37 @@ export default function AuditSetupPanel() {
         {/* Analyse Button */}
         {guide && selectedSection && documents.length > 0 && (
           <div className="space-y-2">
-            <button
-              onClick={handleAnalyse}
-              disabled={isStreaming}
-              className="w-full bg-primary hover:bg-primary-hover disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-colors text-sm shadow-lg shadow-primary/25"
-            >
-              {isStreaming ? (
-                <span className="flex items-center justify-center gap-2">
+            {isStreaming ? (
+              <div className="flex gap-2">
+                <div className="flex-1 flex items-center justify-center gap-2 bg-gray-100 text-gray-500 font-semibold py-3 rounded-xl text-sm">
                   <Loader2 className="w-4 h-4 animate-spin" />
                   {progress
                     ? `Analysing ${Math.min(progress.done + 1, progress.total)} of ${progress.total}...`
                     : 'Analysing...'}
-                </span>
-              ) : (
+                </div>
+                <button
+                  onClick={handleStop}
+                  disabled={stopping}
+                  className="flex items-center justify-center gap-1.5 bg-red-500 hover:bg-red-600 disabled:bg-gray-300 text-white font-semibold px-4 rounded-xl transition-colors text-sm shrink-0"
+                  title="Stop the analysis and keep what has been assessed so far"
+                >
+                  <Square className="w-3.5 h-3.5 fill-current" />
+                  {stopping ? 'Stopping' : 'Stop'}
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={handleAnalyse}
+                className="w-full bg-primary hover:bg-primary-hover text-white font-semibold py-3 rounded-xl transition-colors text-sm shadow-lg shadow-primary/25"
+              >
                 <span className="flex items-center justify-center gap-2">
                   <Search className="w-4 h-4" />
                   {selectedSection === ALL_SECTIONS_ID
                     ? 'Analyse All Control Points'
                     : 'Analyse My Documents'}
                 </span>
-              )}
-            </button>
+              </button>
+            )}
 
             {progress && (
               <div className="space-y-1">

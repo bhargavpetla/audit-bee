@@ -3,6 +3,7 @@
 import { useAudit } from '@/context/AuditContext';
 import { ProgramSection, ALL_SECTIONS_ID } from '@/lib/types';
 import EvidenceChecklist from './EvidenceChecklist';
+import ReportDownload from './ReportDownload';
 import { ClipboardList, FileText, Info } from 'lucide-react';
 import { useState } from 'react';
 
@@ -41,9 +42,10 @@ export default function ContextPanel() {
     <div className="w-[350px] bg-white border-l border-gray-100 flex flex-col shrink-0 overflow-hidden">
       {/* Header */}
       <div className="px-5 pt-5 pb-3 border-b border-gray-100 shrink-0">
-        <h2 className="text-sm font-bold text-gray-900 mb-3">
-          Context Panel
-        </h2>
+        <div className="flex items-center justify-between gap-2 mb-3">
+          <h2 className="text-sm font-bold text-gray-900">Context Panel</h2>
+          <ReportDownload />
+        </div>
 
         {/* Tabs */}
         <div className="flex gap-1">

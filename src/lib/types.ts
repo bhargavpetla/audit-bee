@@ -4,6 +4,10 @@ export interface EvidenceItem {
   isRenewal: boolean;
   status: 'not-checked' | 'provided' | 'missing' | 'partial';
   aiNotes?: string;
+  /** Accepted on the auditor's own observation during a live review, with no document supplied */
+  attested?: boolean;
+  /** Draft audit note recording what the auditor observed */
+  auditorNote?: string;
 }
 
 export interface ProgramSection {
@@ -42,4 +46,15 @@ export interface ParsedGuide {
   sections: ProgramSection[];
   totalEvidence?: number;
   textLength?: number;
+}
+
+/** Header fields of the gap report, matching the Full Audit Gap Report template */
+export interface ReportMeta {
+  programName: string;
+  partner: string;
+  auditDate: string;
+  criteriaVersion: string;
+  preparedBy: string;
+  submissionDate: string;
+  language: string;
 }

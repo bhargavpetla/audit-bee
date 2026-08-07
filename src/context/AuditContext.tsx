@@ -5,6 +5,7 @@ import React, {
   useContext,
   useState,
   useCallback,
+  useRef,
   ReactNode,
 } from 'react';
 import {
@@ -19,6 +20,10 @@ interface ChecklistUpdate {
   id: string;
   status: 'provided' | 'missing' | 'partial';
   notes?: string;
+  /** Accepted on the auditor's own observation in a live review */
+  attested?: boolean;
+  /** Draft audit note recording that observation */
+  note?: string;
 }
 
 interface AuditContextType {
@@ -42,6 +47,19 @@ interface AuditContextType {
   updateLastAssistantMessage: (content: string) => void;
   updateMessageById: (id: string, content: string) => void;
   setIsStreaming: (streaming: boolean) => void;
+
+  // Run control — lets either panel stop whatever is streaming
+  /** Begin a run: clears the cancel flag and marks the app as streaming */
+  startRun: () => void;
+  /** End a run and drop the registered controller */
+  endRun: () => void;
+  /** Hand the current request's controller to the shared Stop button */
+  registerAbort: (controller: AbortController | null) => void;
+  /** Abort the in-flight request and stop any remaining batch work */
+  stopRun: () => void;
+  /** True once the auditor has pressed Stop, until the next run starts */
+  isCancelled: () => boolean;
+
   setGuideLoading: (loading: boolean) => void;
   updateChecklistItems: (
     updates: ChecklistUpdate[],
@@ -78,6 +96,30 @@ export function AuditProvider({ children }: { children: ReactNode }) {
   const [documents, setDocuments] = useState<UploadedDocument[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
+
+  const abortRef = useRef<AbortController | null>(null);
+  const cancelledRef = useRef(false);
+
+  const startRun = useCallback(() => {
+    cancelledRef.current = false;
+    setIsStreaming(true);
+  }, []);
+
+  const endRun = useCallback(() => {
+    abortRef.current = null;
+    setIsStreaming(false);
+  }, []);
+
+  const registerAbort = useCallback((controller: AbortController | null) => {
+    abortRef.current = controller;
+  }, []);
+
+  const stopRun = useCallback(() => {
+    cancelledRef.current = true;
+    abortRef.current?.abort();
+  }, []);
+
+  const isCancelled = useCallback(() => cancelledRef.current, []);
 
   const setGuide = useCallback((parsed: ParsedGuide, fileName: string) => {
     setGuideState({
@@ -150,6 +192,10 @@ export function AuditProvider({ children }: { children: ReactNode }) {
             if (update) {
               item.status = update.status;
               if (update.notes) item.aiNotes = update.notes;
+              if (update.attested) {
+                item.attested = true;
+                if (update.note) item.auditorNote = update.note;
+              }
               anyUpdated = true;
             }
           }
@@ -191,6 +237,9 @@ export function AuditProvider({ children }: { children: ReactNode }) {
   );
 
   const resetAudit = useCallback(() => {
+    abortRef.current?.abort();
+    abortRef.current = null;
+    cancelledRef.current = false;
     setGuideState(null);
     setGuideFileName('');
     setSelectedSection('');
@@ -217,6 +266,11 @@ export function AuditProvider({ children }: { children: ReactNode }) {
         updateLastAssistantMessage,
         updateMessageById,
         setIsStreaming,
+        startRun,
+        endRun,
+        registerAbort,
+        stopRun,
+        isCancelled,
         setGuideLoading,
         updateChecklistItems,
         resetAudit,
