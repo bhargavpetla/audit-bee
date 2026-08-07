@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { buildGapReport } from '@/lib/report-builder';
+import { buildFinalReport } from '@/lib/report-builder';
 import { ProgramSection, ReportMeta } from '@/lib/types';
 
 export async function POST(request: NextRequest) {
@@ -16,8 +16,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const buffer = await buildGapReport(sections, meta);
-    const fileName = `${meta.partner || 'Partner'} - Full Audit Gap Report.docx`;
+    const buffer = await buildFinalReport(sections, meta);
+    const fileName = `${meta.partner || 'Partner'} - Full Audit Final Report.docx`;
 
     return new NextResponse(new Uint8Array(buffer), {
       headers: {

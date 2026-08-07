@@ -51,6 +51,7 @@ export default function ReportDownload() {
     programName: '',
     partner: '',
     auditDate: today(),
+    gapReviewDate: '',
     criteriaVersion: '',
     preparedBy: '',
     submissionDate: today(),
@@ -92,7 +93,7 @@ export default function ReportDownload() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${meta.partner || 'Partner'} - Full Audit Gap Report.docx`;
+      a.download = `${meta.partner || 'Partner'} - Full Audit Final Report.docx`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -133,12 +134,12 @@ export default function ReportDownload() {
         title={
           assessed === 0
             ? 'Run an analysis first — the report is built from the checklist'
-            : `Download the gap report (${openItems} open action items)`
+            : `Download the final audit report (${openItems} open items)`
         }
         className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-lg bg-lavender-50 text-gray-600 hover:bg-lavender-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
       >
         <Download className="w-3.5 h-3.5" />
-        Gap Report
+        Final Report
       </button>
 
       {open && (
@@ -147,11 +148,10 @@ export default function ReportDownload() {
             <div className="flex items-start justify-between mb-3">
               <div>
                 <h3 className="text-sm font-bold text-gray-900">
-                  Full Audit Gap Report
+                  Full Audit Final Report
                 </h3>
                 <p className="text-[11px] text-gray-400 mt-0.5">
-                  {openItems} open action item{openItems === 1 ? '' : 's'} from{' '}
-                  {assessed} assessed evidence items
+                  {assessed} assessed evidence items &bull; {openItems} open
                 </p>
               </div>
               <button
@@ -167,6 +167,7 @@ export default function ReportDownload() {
               {field('Partner', 'partner', 'Partner name')}
               {field('Prepared by', 'preparedBy', 'Auditor name')}
               {field('Audit date', 'auditDate', '', 'date')}
+              {field('Gap review meeting date', 'gapReviewDate', '', 'date')}
               {field('Report submission date', 'submissionDate', '', 'date')}
               {field('Criteria version', 'criteriaVersion', 'e.g. 4.2')}
               {field('Working language', 'language')}

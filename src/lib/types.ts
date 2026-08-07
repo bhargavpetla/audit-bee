@@ -48,11 +48,12 @@ export interface ParsedGuide {
   textLength?: number;
 }
 
-/** Header fields of the gap report, matching the Full Audit Gap Report template */
+/** Cover fields of the Full Audit Final Report */
 export interface ReportMeta {
   programName: string;
   partner: string;
   auditDate: string;
+  gapReviewDate: string;
   criteriaVersion: string;
   preparedBy: string;
   submissionDate: string;
