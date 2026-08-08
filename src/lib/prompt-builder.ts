@@ -43,6 +43,10 @@ Work through the evidence items ONE AT A TIME, in the order they are listed belo
 4. Judge only against what the guide asks for. Do not invent requirements the guide does not state.
 5. Items marked [R] are required for renewal. When one is not met, it outranks everything else.
 
+**An evidence item is judged against its control, not on its own.** Many guides name the artefact to supply ("Organizational chart", "SLA sample", "Screenshot of KPI dashboard") rather than restating the requirement. Producing a document of that name is not enough — its CONTENT must demonstrate what the parent control requires. An SLA sample that shows business-hours cover does not satisfy a control asking for 24/7 support: that item is missing or partial, and the reason is what the document actually says.
+
+Where the control is phrased as a question, settle the honest Yes/No answer to that question first, then make every evidence item under it consistent with that answer. A control whose truthful answer is "No" cannot have all of its evidence items marked provided.
+
 Accuracy matters more than length. A wrong "missing" on evidence the auditor did supply wastes their time, so re-read the documents before you write that verdict.
 
 ## Auditor attestation (live review)
@@ -55,7 +59,7 @@ Recorded on the auditor's observation. No document was supplied; the note below 
 
 ### Draft audit note
 
-> <2–5 sentences in formal audit language, third person, recording what the auditor states they observed, which requirement it satisfies, and how it was demonstrated. Write it so it can be pasted into the gap report unchanged. Use only what the auditor said — do not invent a tool name, a document reference, a date or a metric they did not give you.>
+> <the finished note — see "Writing the note" below>
 
 ### Items recorded as met
 
@@ -66,6 +70,23 @@ Attestation rules:
 - Set \`"attested": true\` and put the draft note in \`"note"\` for every item you mark this way, in the checklist block.
 - Where the auditor's account only partly satisfies a requirement, use ⚠️ and "partial" — name what still has to be seen.
 - Do not ask them to upload a document. Do not contradict their observation.
+
+### Writing the note
+
+The auditor is dictating in shorthand — "saw the ticketing tool, looks fine". Your job is to turn that into the note a senior assessor would have written, so it can be pasted into the audit report unchanged. Raise the register; never merely echo their sentence back.
+
+Structure it as 3–5 sentences of formal audit prose, third person, past tense, no bullet points, no first person:
+1. **What was examined and how** — name the artefact or system the auditor saw and the means of validation (walkthrough, live demonstration, screen share, document inspection, interview).
+2. **What it showed** — the specific capability, configuration or record observed, in the vocabulary the program guide uses for this control.
+3. **How it satisfies the requirement** — tie the observation explicitly to what the control requires, quoting the guide's own wording for the requirement.
+4. **Scope or limitation, where one exists** — sampling, the number of records inspected, or anything the auditor did not see.
+
+Quality bar:
+- Use the terminology of THIS control from the program guide above. If the guide calls it an "escalation procedure covering internal and third-party escalation", use that phrase rather than "escalation stuff".
+- Write to the standard of an assessment body: precise, neutral, evidence-led. No marketing adjectives, no "excellent", no praise.
+- Attribute the observation: "the auditor observed", "was demonstrated to the auditor", "the partner evidenced during the live session".
+- **Invent nothing.** Do not add a tool name, vendor, version, document reference, date, headcount, metric or sample size the auditor did not give you. If the auditor gave no detail on a point the control requires, write that it was confirmed verbally and not independently sampled, rather than inventing the detail.
+- If what the auditor described falls short of the control, say so plainly in the note and mark the item ⚠️ partial rather than ✅.
 
 ## Response format
 

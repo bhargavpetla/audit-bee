@@ -50,6 +50,12 @@ function extractTitle(rawText: string): string {
 function extractSections(text: string): ProgramSection[] {
   const lines = text.split('\n');
 
+  // Question-based guides (a "<Name> Questions" table per section) carry no
+  // decimal IDs in the body at all, so the numbered-heading logic below finds
+  // only incidental numbering such as a revision history.
+  const questionSections = extractQuestionSections(lines);
+  if (questionSections.length > 0) return questionSections;
+
   interface RawSection {
     id: string;
     title: string;
@@ -273,6 +279,210 @@ function pruneDescriptionOnlyEvidence(
 }
 
 /**
+ * Some assessment guides are written as questionnaires rather than numbered
+ * requirements: a "<Name> Questions" table per section, then a
+ * "Question | Response | Evidence Required" header, then numbered questions
+ * each followed by Yes/No and a bulleted list of the artefacts to upload.
+ * Each question becomes a control point and each bullet an evidence item.
+ */
+function extractQuestionSections(lines: string[]): ProgramSection[] {
+  const tables: { name: string; bodyStart: number; headingLine: number }[] = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const match = lines[i].trim().match(/^(.+?)\s+Questions$/i);
+    if (!match) continue;
+
+    let j = i + 1;
+    while (j < lines.length && !lines[j].trim()) j++;
+    const header = (lines[j] || '').trim().toLowerCase();
+    if (header.includes('question') && header.includes('evidence required')) {
+      tables.push({
+        name: cleanTitle(match[1]),
+        bodyStart: j + 1,
+        headingLine: i,
+      });
+    }
+  }
+
+  if (tables.length === 0) return [];
+
+  const furniture = runningHeaders(lines);
+  const sections: ProgramSection[] = [];
+
+  tables.forEach((tableInfo, index) => {
+    const sectionId = `${index + 1}.0`;
+    const end =
+      index + 1 < tables.length ? tables[index + 1].headingLine : lines.length;
+
+    const questions = parseQuestionBlocks(
+      lines.slice(tableInfo.bodyStart, end),
+      furniture,
+      sectionId
+    );
+    if (questions.length === 0) return;
+
+    sections.push({
+      id: sectionId,
+      title: tableInfo.name,
+      description: sectionIntro(lines, tableInfo.headingLine, furniture),
+      evidenceItems: [],
+      children: questions,
+    });
+  });
+
+  return sections;
+}
+
+interface QuestionBlock {
+  number: number;
+  questionLines: string[];
+  evidenceLines: string[];
+  inEvidence: boolean;
+  done: boolean;
+}
+
+function parseQuestionBlocks(
+  body: string[],
+  furniture: Set<string>,
+  sectionId: string
+): ProgramSection[] {
+  const blocks: QuestionBlock[] = [];
+  let current: QuestionBlock | null = null;
+
+  for (const raw of body) {
+    const line = raw.trim();
+    if (!line) continue;
+
+    // A bare number starts the next question, but only once the previous one
+    // has reached its evidence list — question prose can contain numbers too.
+    // Tested before the noise filter, which would discard it as a page number.
+    const numbered = line.match(/^(\d{1,2})$/);
+    if (numbered && (!current || current.inEvidence)) {
+      if (current) blocks.push(current);
+      current = {
+        number: Number(numbered[1]),
+        questionLines: [],
+        evidenceLines: [],
+        inEvidence: false,
+        done: false,
+      };
+      continue;
+    }
+
+    if (!current || isNoiseLine(line) || furniture.has(line)) continue;
+
+    if (/^yes\s*\/\s*no$/i.test(line)) {
+      current.inEvidence = true;
+      continue;
+    }
+
+    if (!current.inEvidence) {
+      current.questionLines.push(line);
+      continue;
+    }
+
+    if (current.done) continue;
+
+    // The evidence column is narrow, so its wrapped lines are short. A long
+    // line, or a heading, means the table has ended and the next section's
+    // prose has begun — the last question of a table would otherwise swallow it
+    const isBullet = /^[•▪●·*-]/.test(line);
+    if (
+      !isBullet &&
+      (line.length > 45 || /(?:^|\s)(?:Control|Overview|Questions)$/i.test(line))
+    ) {
+      current.done = true;
+      continue;
+    }
+
+    current.evidenceLines.push(line);
+  }
+  if (current) blocks.push(current);
+
+  return blocks.map((block) => {
+    const id = `${sectionId.split('.')[0]}.${block.number}`;
+    const full = cleanText(block.questionLines.join(' '));
+
+    // The question itself is the first sentence; the rest is the guide's
+    // explanation of what the control expects
+    const cut = full.indexOf('?');
+    const title = cut === -1 ? truncate(full, 120) : full.slice(0, cut + 1);
+    const description = cut === -1 ? '' : full.slice(cut + 1).trim();
+
+    return {
+      id,
+      title,
+      description,
+      evidenceItems: bulletsToEvidence(block.evidenceLines, id),
+    };
+  });
+}
+
+/** Bullet lines wrap across the column, so un-bulleted lines continue the previous item */
+function bulletsToEvidence(lines: string[], controlId: string): EvidenceItem[] {
+  const texts: string[] = [];
+  for (const line of lines) {
+    const bullet = line.match(/^[•▪●·*-]\s*(.*)$/);
+    if (bullet) texts.push(bullet[1]);
+    else if (texts.length > 0) texts[texts.length - 1] += ' ' + line;
+  }
+
+  return texts
+    .map((t) => cleanText(t))
+    .filter((t) => t.length > 2)
+    .map((text, i) => ({
+      id: `${controlId}-E${i + 1}`,
+      text,
+      isRenewal: false,
+      status: 'not-checked' as const,
+    }));
+}
+
+/** The prose between a section's own heading and its questions table */
+function sectionIntro(
+  lines: string[],
+  headingLine: number,
+  furniture: Set<string>
+): string {
+  const parts: string[] = [];
+  for (let i = headingLine - 1; i >= 0 && i > headingLine - 40; i--) {
+    const line = lines[i].trim();
+    if (!line || isNoiseLine(line) || furniture.has(line)) continue;
+    // Stop at the previous section's evidence column
+    if (/^yes\s*\/\s*no$/i.test(line) || line.startsWith('•')) break;
+    parts.unshift(line);
+    if (parts.join(' ').length > 700) break;
+  }
+  return truncate(cleanText(parts.join(' ')), 700);
+}
+
+/**
+ * Lines repeated on many pages are headers or footers. Bullets, bare numbers
+ * and the Yes/No column are structural and repeat legitimately.
+ */
+function runningHeaders(lines: string[]): Set<string> {
+  const counts = new Map<string, number>();
+  for (const raw of lines) {
+    const line = raw.trim();
+    // Short fragments repeat as wrapped continuations of real content
+    if (line.length < 20 || line.length > 120) continue;
+    if (line.startsWith('•') || /^\d+$/.test(line)) continue;
+    if (/^yes\s*\/\s*no$/i.test(line)) continue;
+    counts.set(line, (counts.get(line) || 0) + 1);
+  }
+
+  const repeated = new Set<string>();
+  for (const [line, count] of counts) {
+    if (count >= 4) repeated.add(line);
+  }
+  return repeated;
+}
+
+function truncate(text: string, max: number): string {
+  return text.length > max ? text.slice(0, max - 3) + '...' : text;
+}
+
+/**
  * Find the end of the Table of Contents.
  * TOC lines typically have title text followed by dots/spaces and a page number.
  */
@@ -333,6 +543,7 @@ function findTocEnd(lines: string[]): number {
 
 function isNoiseLine(line: string): boolean {
   if (line.match(/^page\s+\d+/i)) return true;
+  if (line.match(/\bpage\s+\d+\s+of\s+\d+\b/i)) return true; // "Version 3.1  Page 20 of 23"
   if (line.match(/confidential/i) && line.length < 50) return true;
   // Running header/footer, e.g. "... Assessment v4.2 (Sep 2025)   GOOGLE CONFIDENTIAL 27"
   if (line.match(/confidential\s*\d{0,3}\s*$/i)) return true;
