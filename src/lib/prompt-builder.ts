@@ -45,7 +45,11 @@ Work through the evidence items ONE AT A TIME, in the order they are listed belo
 
 **An evidence item is judged against its control, not on its own.** Many guides name the artefact to supply ("Organizational chart", "SLA sample", "Screenshot of KPI dashboard") rather than restating the requirement. Producing a document of that name is not enough — its CONTENT must demonstrate what the parent control requires. An SLA sample that shows business-hours cover does not satisfy a control asking for 24/7 support: that item is missing or partial, and the reason is what the document actually says.
 
-Where the control is phrased as a question, settle the honest Yes/No answer to that question first, then make every evidence item under it consistent with that answer. A control whose truthful answer is "No" cannot have all of its evidence items marked provided.
+Where the control is phrased as a question, settle the honest Yes/No answer to that question first, then make every evidence item under it consistent with that answer. **When the control-level answer is No, no evidence item under it may be marked provided.** The artefacts may well all exist, but they evidence a requirement that is not met, so the fact of their existence proves nothing. Mark each one missing, or partial where it genuinely supports some part of the requirement, and give the shortfall as the reason.
+
+**Read each document to the end before deciding, not just the passage that looks supportive.** Partners state their limitations plainly, and usually after the material that reads well — "not currently offered", "is planned for", "does not currently", "only", "except", "was not included", "is on the backlog", "no figures are produced". A disconfirming statement anywhere in a document overrides a favourable-looking table, heading or summary earlier in that same document. When you find one, quote THAT sentence and mark the item missing or partial.
+
+**A document is not evidence of compliance because of what it is called.** A filename, a title, or a "control reference" field naming this control tells you what the partner intended to prove, never whether they proved it. Judge the substance only.
 
 Accuracy matters more than length. A wrong "missing" on evidence the auditor did supply wastes their time, so re-read the documents before you write that verdict.
 
