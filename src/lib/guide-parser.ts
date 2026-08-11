@@ -18,7 +18,10 @@ function extractTitle(rawText: string): string {
     const t = line.trim();
     if (!t || t.length < 5 || t.length > 150) continue;
     if (t.match(/^\d+$/) || t.match(/^page\s/i)) continue;
+    // A title starts a line, not a wrapped fragment of a sentence
+    if (!/^[A-Z0-9]/.test(t)) continue;
     if (
+      t.match(/^regulation\s|^directive\s|^council regulation/i) ||
       t.match(/assessment/i) ||
       t.match(/checklist/i) ||
       t.match(/program guide/i) ||
@@ -55,6 +58,12 @@ function extractSections(text: string): ProgramSection[] {
   // only incidental numbering such as a revision history.
   const questionSections = extractQuestionSections(lines);
   if (questionSections.length > 0) return questionSections;
+
+  // Legal instruments (regulations, directives, standards) are organised into
+  // Chapters, Articles and Annexes, with requirements as numbered paragraphs
+  // whose text runs on from the number rather than sitting under a heading.
+  const regulationSections = extractRegulationSections(lines);
+  if (regulationSections.length > 0) return regulationSections;
 
   interface RawSection {
     id: string;
@@ -276,6 +285,236 @@ function pruneDescriptionOnlyEvidence(
   };
 
   walk(sections);
+}
+
+const ANNEX_RE = /^ANNEX\s+([IVXL]+)\s*$/;
+const CHAPTER_RE = /^CHAPTER\s+([IVXL]+)\s*$/;
+const ARTICLE_RE = /^Article\s+(\d+)\s*$/;
+/** "1.  text", "10.2.  text", or the number alone with its text on the next line */
+const REQUIREMENT_RE = /^(\d+(?:\.\d+)*)\.\s*(.*)$/;
+const SUBPOINT_RE = /^\(([a-z]{1,2}|[ivxl]{1,4})\)\s*(.+)$/;
+
+/** Page furniture in an official journal or standard */
+function isInstrumentNoise(line: string): boolean {
+  if (/official journal of the european union/i.test(line)) return true;
+  if (/^[A-Z]{2}\s*$/.test(line)) return true; // language code stamp
+  if (/^\d{1,2}\.\d{1,2}\.\d{4}\s/.test(line)) return true; // date + folio
+  if (/^L\s+\d+\/\d+\s*$/.test(line)) return true;
+  return false;
+}
+
+/**
+ * Regulations, directives and standards: Chapters and Annexes for structure,
+ * Articles and numbered paragraphs for the requirements themselves, and
+ * lettered points beneath them. Nothing here looks like a numbered heading, so
+ * the decimal-ID logic finds almost nothing.
+ */
+function extractRegulationSections(lines: string[]): ProgramSection[] {
+  const trimmed = lines.map((l) => l.trim());
+  const annexCount = trimmed.filter((l) => ANNEX_RE.test(l)).length;
+  const articleCount = trimmed.filter((l) => ARTICLE_RE.test(l)).length;
+  if (annexCount < 3 && articleCount < 20) return [];
+
+  const sections: ProgramSection[] = [];
+  const firstAnnex = trimmed.findIndex((l) => ANNEX_RE.test(l));
+
+  // --- Enacting terms: one section per Chapter, one control per Article
+  const chapterStarts: { index: number; numeral: string }[] = [];
+  for (let i = 0; i < (firstAnnex === -1 ? trimmed.length : firstAnnex); i++) {
+    const match = trimmed[i].match(CHAPTER_RE);
+    if (match) chapterStarts.push({ index: i, numeral: match[1] });
+  }
+
+  chapterStarts.forEach((chapter, n) => {
+    const end =
+      n + 1 < chapterStarts.length
+        ? chapterStarts[n + 1].index
+        : firstAnnex === -1
+          ? trimmed.length
+          : firstAnnex;
+    const id = `C${chapter.numeral}`;
+    const articles = parseArticles(lines, chapter.index + 1, end, id);
+    if (articles.length === 0) return;
+
+    sections.push({
+      id,
+      title: `Chapter ${chapter.numeral} — ${headingTitle(lines, chapter.index)}`,
+      description: '',
+      evidenceItems: [],
+      children: articles,
+    });
+  });
+
+  // --- Annexes: one section each, one control per numbered requirement
+  const annexStarts: { index: number; numeral: string }[] = [];
+  for (let i = firstAnnex === -1 ? trimmed.length : firstAnnex; i < trimmed.length; i++) {
+    const match = trimmed[i].match(ANNEX_RE);
+    if (match) annexStarts.push({ index: i, numeral: match[1] });
+  }
+
+  annexStarts.forEach((annex, n) => {
+    const end =
+      n + 1 < annexStarts.length ? annexStarts[n + 1].index : trimmed.length;
+    const id = `A${annex.numeral}`;
+    const requirements = parseRequirements(lines, annex.index + 2, end, id);
+    if (requirements.length === 0) return;
+
+    sections.push({
+      id,
+      title: `Annex ${annex.numeral} — ${headingTitle(lines, annex.index)}`,
+      description: '',
+      evidenceItems: [],
+      children: requirements,
+    });
+  });
+
+  return sections;
+}
+
+/** The title line that follows a CHAPTER / ANNEX / Article marker */
+function headingTitle(lines: string[], markerLine: number): string {
+  for (let i = markerLine + 1; i < Math.min(markerLine + 5, lines.length); i++) {
+    const t = lines[i].trim();
+    if (!t || isNoiseLine(t) || isInstrumentNoise(t)) continue;
+    // A chapter can be followed straight away by its first article
+    if (ARTICLE_RE.test(t) || CHAPTER_RE.test(t)) return '';
+    return cleanTitle(t);
+  }
+  return '';
+}
+
+function parseArticles(
+  lines: string[],
+  from: number,
+  to: number,
+  sectionId: string
+): ProgramSection[] {
+  const starts: { index: number; number: string }[] = [];
+  for (let i = from; i < to; i++) {
+    const match = lines[i].trim().match(ARTICLE_RE);
+    if (match) starts.push({ index: i, number: match[1] });
+  }
+
+  return starts
+    .map((article, n) => {
+      const end = n + 1 < starts.length ? starts[n + 1].index : to;
+      const id = `${sectionId}.${article.number}`;
+      const title = headingTitle(lines, article.index);
+      const paragraphs = parseRequirements(lines, article.index + 2, end, id);
+
+      // An article's numbered paragraphs are its checkable obligations
+      const evidenceItems: EvidenceItem[] = paragraphs.flatMap((p) =>
+        p.evidenceItems.length > 0
+          ? p.evidenceItems
+          : [
+              {
+                id: `${p.id}-E1`,
+                text: p.description || p.title,
+                isRenewal: false,
+                status: 'not-checked' as const,
+              },
+            ]
+      );
+
+      return {
+        id,
+        title: `Article ${article.number}${title ? ` — ${title}` : ''}`,
+        description: '',
+        evidenceItems,
+      };
+    })
+    .filter((a) => a.evidenceItems.length > 0);
+}
+
+interface RequirementBlock {
+  number: string;
+  textLines: string[];
+  points: { label: string; lines: string[] }[];
+}
+
+function parseRequirements(
+  lines: string[],
+  from: number,
+  to: number,
+  parentId: string
+): ProgramSection[] {
+  const blocks: RequirementBlock[] = [];
+  let current: RequirementBlock | null = null;
+  let point: { label: string; lines: string[] } | null = null;
+
+  // A chapter heading inside an annex subdivides it without restarting the
+  // numbering, so it is skipped along with its title rather than ending the run
+  let skipHeadingTitle = false;
+
+  for (let i = from; i < to && i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line || isNoiseLine(line) || isInstrumentNoise(line)) continue;
+    if (ARTICLE_RE.test(line) || ANNEX_RE.test(line)) break;
+
+    if (CHAPTER_RE.test(line)) {
+      skipHeadingTitle = true;
+      continue;
+    }
+    if (skipHeadingTitle) {
+      skipHeadingTitle = false;
+      continue;
+    }
+
+    const requirement = line.match(REQUIREMENT_RE);
+    if (requirement && requirement[1].length <= 12) {
+      if (current) blocks.push(current);
+      current = { number: requirement[1], textLines: [], points: [] };
+      point = null;
+      if (requirement[2]) current.textLines.push(requirement[2]);
+      continue;
+    }
+
+    if (!current) continue;
+
+    const sub = line.match(SUBPOINT_RE);
+    if (sub) {
+      point = { label: sub[1], lines: [sub[2]] };
+      current.points.push(point);
+      continue;
+    }
+
+    if (point) point.lines.push(line);
+    else current.textLines.push(line);
+  }
+  if (current) blocks.push(current);
+
+  return blocks
+    .map((block) => {
+      const body = cleanText(block.textLines.join(' '));
+      const id = `${parentId}.${block.number}`;
+
+      const evidenceItems: EvidenceItem[] =
+        block.points.length > 0
+          ? block.points.map((p, i) => ({
+              id: `${id}-E${i + 1}`,
+              text: cleanText(`(${p.label}) ${p.lines.join(' ')}`),
+              isRenewal: false,
+              status: 'not-checked' as const,
+            }))
+          : body.length > 25
+            ? [
+                {
+                  id: `${id}-E1`,
+                  text: truncate(body, 900),
+                  isRenewal: false,
+                  status: 'not-checked' as const,
+                },
+              ]
+            : [];
+
+      return {
+        id,
+        title: `${block.number} ${truncate(body, 110)}`.trim(),
+        description: truncate(body, 900),
+        evidenceItems,
+      };
+    })
+    .filter((r) => r.evidenceItems.length > 0);
 }
 
 /**

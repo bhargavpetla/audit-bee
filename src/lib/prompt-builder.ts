@@ -149,6 +149,7 @@ export function buildPrompt(
   // Build section context from dynamic sections if available
   let sectionContext = '';
   let evidenceList = '';
+  let sectionTitle = '';
 
   if (guideSections && guideSections.length > 0) {
     // A section id of ALL_SECTIONS_ID scopes the analysis to the whole guide
@@ -158,6 +159,8 @@ export function buildPrompt(
         : [findSection(guideSections, sectionId)].filter(
             (s): s is ProgramSection => !!s
           );
+
+    if (targets.length === 1) sectionTitle = targets[0].title;
 
     if (targets.length > 0) {
       sectionContext = targets.map(buildSectionContext).join('\n');
@@ -178,9 +181,11 @@ export function buildPrompt(
     sectionId === ALL_SECTIONS_ID
   );
 
-  // Include raw guide text (trimmed to fit context window)
+  // Include raw guide text, windowed onto the section under analysis. A large
+  // instrument (a regulation runs to hundreds of pages) would otherwise be cut
+  // off at the front, leaving later sections with none of their own text.
   const rawGuideContext = guideRawText
-    ? `\n\n## FULL PROGRAM GUIDE REFERENCE TEXT\n\n${guideRawText.slice(0, MAX_GUIDE_TEXT_CHARS)}`
+    ? `\n\n## PROGRAM GUIDE REFERENCE TEXT\n\n${windowGuideText(guideRawText, anchorFor(sectionTitle))}`
     : '';
 
   const systemInstruction = `${systemPrompt}${rawGuideContext}\n\n## PROGRAM GUIDE CONTEXT FOR CURRENT SECTION\n\n${sectionContext}\n\n## EVIDENCE ITEM IDS — USE THESE EXACT IDS IN YOUR CHECKLIST_UPDATE\nYou MUST update ALL of these items in your <!--CHECKLIST_UPDATE:--> block:\n${evidenceList}`;
@@ -198,6 +203,34 @@ export function buildPrompt(
   const userContent = `## UPLOADED DOCUMENTS\n\n${documentContext}\n\n## AUDITOR MESSAGE\n\n${userMessage}`;
 
   return { systemInstruction, userContent };
+}
+
+/**
+ * Section titles are prefixed by the parser ("Annex I — GENERAL SAFETY…"), but
+ * the source document carries only the part after the dash.
+ */
+function anchorFor(sectionTitle: string): string {
+  const dash = sectionTitle.indexOf('—');
+  const anchor = dash === -1 ? sectionTitle : sectionTitle.slice(dash + 1);
+  return anchor.trim();
+}
+
+/**
+ * Keep the window centred on the section being analysed rather than always
+ * taking the head of the document, with a little of the run-up for context.
+ */
+function windowGuideText(raw: string, anchor: string): string {
+  if (raw.length <= MAX_GUIDE_TEXT_CHARS) return raw;
+
+  if (anchor.length > 8) {
+    const at = raw.indexOf(anchor);
+    if (at !== -1) {
+      const start = Math.max(0, at - Math.floor(MAX_GUIDE_TEXT_CHARS * 0.1));
+      return raw.slice(start, start + MAX_GUIDE_TEXT_CHARS);
+    }
+  }
+
+  return raw.slice(0, MAX_GUIDE_TEXT_CHARS);
 }
 
 function findSection(
