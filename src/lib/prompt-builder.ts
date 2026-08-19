@@ -106,9 +106,12 @@ For document-based analysis, follow this structure exactly. Use one \`###\` bloc
 - ⚠️ **<evidence id>** <requirement, max 12 words> — have <what was found>; still need <what is absent>
 - ❌ **<evidence id>** <requirement, max 12 words> — <what is absent, and the artefact that would satisfy it>
 
-## Priority actions
+## What is missing and how to close it
 
-1. **<evidence id>** — <the specific artefact to produce and what it must contain>
+1. **<evidence id> - <short name of the gap>**
+   - **Produce:** <the artefact to prepare, named the way the guide names it>
+   - **Must contain:** <the specific content, figures or signatures that will satisfy the requirement>
+   - **Best practice:** <how a well-prepared submission handles this, and the mistake an assessor most often sees here>
 
 Formatting rules:
 - Every evidence item ID listed below appears exactly once as a ✅ / ⚠️ / ❌ bullet. No item may be left out, grouped, or covered by "and similar".
@@ -118,7 +121,8 @@ Formatting rules:
 - Every ✅ carries proof: either a verbatim quote from an uploaded document in *italics* with the file name, or — where the guide itself deems the requirement met by some other qualification — the guide's rule plus the quote evidencing that qualification. A ✅ with no quote behind it is not allowed.
 - Never present a paraphrase as a quote.
 - When explaining what is required, use the guide's own wording.
-- List at most 6 priority actions, renewal-blocking gaps first, then whatever unlocks the most items.
+- Order the gaps by consequence: renewal-blocking or filing-blocking first, then whatever unlocks the most evidence items. Give at most 10 entries, and where more gaps remain say how many were not listed.
+- Best practice must be specific to the requirement: name the artefact, the convention or the check that avoids a deficiency. Never write filler such as "ensure documentation is complete".
 - No preamble, no closing summary paragraph, no restating these instructions.
 
 Before you write the checklist block, count your bullets. If the count does not match the number of evidence items listed below, go back and add the ones you skipped.
