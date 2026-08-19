@@ -20,6 +20,7 @@ function extractTitle(rawText: string): string {
     if (t.match(/^\d+$/) || t.match(/^page\s/i)) continue;
     // A title starts a line, not a wrapped fragment of a sentence
     if (!/^[A-Z0-9]/.test(t)) continue;
+    if (isTocLine(t) || /\.{3,}/.test(t)) continue;
     if (
       t.match(/^regulation\s|^directive\s|^council regulation/i) ||
       t.match(/assessment/i) ||
@@ -43,6 +44,7 @@ function extractTitle(rawText: string): string {
   let best = '';
   for (const line of lines.slice(0, 20)) {
     const t = line.trim();
+    if (isTocLine(t) || /\.{3,}/.test(t)) continue;
     if (t.length > best.length && t.length > 10 && t.length < 150 && !t.match(/^\d+$/)) {
       best = t;
     }
@@ -64,6 +66,11 @@ function extractSections(text: string): ProgramSection[] {
   // whose text runs on from the number rather than sitting under a heading.
   const regulationSections = extractRegulationSections(lines);
   if (regulationSections.length > 0) return regulationSections;
+
+  // Checklist tables flattened by PDF extraction: an item number opens each
+  // row and a "Comments" cell closes it, with the checkable lines in between.
+  const checklistSections = extractChecklistTableSections(lines);
+  if (checklistSections.length > 0) return checklistSections;
 
   interface RawSection {
     id: string;
@@ -285,6 +292,195 @@ function pruneDescriptionOnlyEvidence(
   };
 
   walk(sections);
+}
+
+const CHECKLIST_GROUP_RE =
+  /^(ATTACHMENT|MODULE|SECTION|PART)\s+(\d+)(?!\.\d)\s*[:.\u2013-]?\s*(.*)$/i;
+/** A checklist row ends at its Comments cell */
+const ROW_END_RE = /^comments?\s*:?\s*$/i;
+/** "1.1", "1.1 1.1.2", "2.7.1.2 Summary of Results", "3.2.S.2.1" */
+const ITEM_NUMBER_RE =
+  /^(\d+(?:\.[0-9A-Za-z]+)+)(?:\s+(\d+(?:\.[0-9A-Za-z]+)+))?\s*(.*)$/;
+const CHECK_BULLET_RE = /^[\u2022\u25aa\u25cf\u2610\u2611\u2612\uf0a7\uf0b7\uf06c*\u00b7-]\s*/;
+
+/**
+ * Government and regulatory checklists are authored as tables. PDF extraction
+ * flattens them to a stream of cell contents: an item number opens the row,
+ * the checkable lines follow, and a "Comments" cell closes it. Nothing in that
+ * stream looks like a heading, so the numbered-heading logic reads the item
+ * numbers as sections and produces garbled titles.
+ */
+function extractChecklistTableSections(lines: string[]): ProgramSection[] {
+  const trimmed = lines.map((l) => l.trim());
+  const rowEnds = trimmed.filter((l) => ROW_END_RE.test(l)).length;
+  const groups: { index: number; kind: string; number: string; title: string }[] = [];
+
+  trimmed.forEach((line, i) => {
+    const match = line.match(CHECKLIST_GROUP_RE);
+    if (!match) return;
+    // A contents entry trails dot leaders and a page number, either on the
+    // heading line itself or on the line its title wrapped onto
+    if (isTocLine(line) || /\.{3,}/.test(line)) return;
+    if (/\.{3,}\s*\d{1,3}\s*$/.test(trimmed[i + 1] || '')) return;
+    groups.push({
+      index: i,
+      kind: match[1].toUpperCase(),
+      number: match[2],
+      title: cleanTitle(match[3]),
+    });
+  });
+
+  if (rowEnds < 15 || groups.length < 2) return [];
+
+  const sections: ProgramSection[] = [];
+
+  groups.forEach((group, n) => {
+    const end = n + 1 < groups.length ? groups[n + 1].index : lines.length;
+    const controls = parseChecklistRows(lines, group.index + 1, end, sectionIdFor(group));
+    if (controls.length === 0) return;
+
+    // A title that wrapped onto the next line
+    let title = group.title;
+    if (!title) {
+      const next = trimmed[group.index + 1];
+      if (next && !ITEM_NUMBER_RE.test(next) && next.length < 90) title = cleanTitle(next);
+    }
+
+    sections.push({
+      id: sectionIdFor(group),
+      title: `${titleCase(group.kind)} ${group.number}${title ? ` — ${title}` : ''}`,
+      description: '',
+      evidenceItems: [],
+      children: controls,
+    });
+  });
+
+  return sections;
+}
+
+function sectionIdFor(group: { kind: string; number: string }): string {
+  return `${group.kind[0]}${group.number}`;
+}
+
+function titleCase(word: string): string {
+  return word.charAt(0) + word.slice(1).toLowerCase();
+}
+
+/** One control per checklist row, its checkable lines becoming evidence items */
+function parseChecklistRows(
+  lines: string[],
+  from: number,
+  to: number,
+  sectionId: string
+): ProgramSection[] {
+  const controls: ProgramSection[] = [];
+  let row: string[] = [];
+  const furniture = runningHeaders(lines);
+
+  const flush = () => {
+    const control = rowToControl(row, sectionId, controls.length + 1);
+    if (control) controls.push(control);
+    row = [];
+  };
+
+  for (let i = from; i < to && i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line || isNoiseLine(line) || isInstrumentNoise(line)) continue;
+    if (furniture.has(line)) continue;
+    if (CHECKLIST_GROUP_RE.test(line)) break;
+
+    if (ROW_END_RE.test(line)) {
+      flush();
+      continue;
+    }
+    row.push(line);
+  }
+  flush();
+
+  return controls;
+}
+
+function rowToControl(
+  row: string[],
+  sectionId: string,
+  ordinal: number
+): ProgramSection | null {
+  if (row.length === 0) return null;
+
+  // The row opens with its item number, either alone or ahead of the title
+  let number = '';
+  let title = '';
+  let bodyFrom = 0;
+
+  const first = row[0].match(ITEM_NUMBER_RE);
+  if (first && /^\d/.test(row[0])) {
+    number = first[2] || first[1];
+    title = cleanTitle(first[3]);
+    bodyFrom = 1;
+    // "1.2" then "*" then the requirement on the following line
+    while (!title && bodyFrom < row.length) {
+      const candidate = row[bodyFrom];
+      bodyFrom++;
+      if (candidate.length < 3 || /^[*\u2020\u2021]$/.test(candidate)) continue;
+      title = cleanTitle(candidate);
+    }
+  } else {
+    title = cleanTitle(row[0]);
+    bodyFrom = 1;
+  }
+
+  const body = row.slice(bodyFrom);
+  const items = checklistLinesToEvidence(body);
+
+  // A row with a title but no lines beneath it is still one checkable item
+  if (items.length === 0 && title.length > 8) {
+    items.push({ id: 'E1', text: truncate(title, 500), isRenewal: false, status: 'not-checked' });
+  }
+  if (items.length === 0) return null;
+
+  const id = `${sectionId}-${number || ordinal}`;
+  return {
+    id,
+    title: truncate(title || `Item ${number || ordinal}`, 130),
+    description: '',
+    evidenceItems: items.map((item, i) => ({ ...item, id: `${id}-E${i + 1}` })),
+  };
+}
+
+/**
+ * Within a row, a bullet, a numbered point or a fresh capitalised line starts a
+ * new checkable item; anything else continues the one before it.
+ */
+function checklistLinesToEvidence(body: string[]): EvidenceItem[] {
+  const texts: string[] = [];
+
+  for (const line of body) {
+    const bare = line.replace(CHECK_BULLET_RE, '').trim();
+    if (!bare || bare.length < 3) continue;
+    if (/^https?:\/\//i.test(bare)) continue;
+    // A long URL wraps mid-path, leaving a fragment with no spaces in it
+    if (!/\s/.test(bare) && bare.length > 24 && /[/.]/.test(bare)) continue;
+
+    const isBullet = CHECK_BULLET_RE.test(line);
+    const isNumbered = /^\d+[.)]\s+\S/.test(bare);
+    const previous = texts[texts.length - 1];
+    const continues =
+      previous !== undefined &&
+      (/^[a-z(]/.test(bare) || /[,;:\u2013-]$/.test(previous));
+
+    if (texts.length === 0 || isBullet || isNumbered || !continues) texts.push(bare);
+    else texts[texts.length - 1] += ' ' + bare;
+  }
+
+  return texts
+    .map((t) => cleanText(t))
+    .filter((t) => t.length > 5)
+    .map((text) => ({
+      id: 'E',
+      text: truncate(text, 500),
+      isRenewal: false,
+      status: 'not-checked' as const,
+    }));
 }
 
 const ANNEX_RE = /^ANNEX\s+([IVXL]+)\s*$/;
